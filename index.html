@@ -1,0 +1,181 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>FM Face Prompt Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Generate copy‑paste prompts for AI face renders tailored for Football Manager regens." />
+  <style>
+    :root { --w: 860px; }
+    body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji'; 
+           max-width: var(--w); margin: 24px auto; padding: 0 16px; line-height: 1.45; }
+    header { margin-bottom: 16px; }
+    h1 { font-size: 28px; margin: 0 0 8px; }
+    .muted { color: #6b7280; font-size: 14px; }
+    .grid { display: grid; gap: 10px; }
+    label { font-weight: 600; }
+    select, button, textarea, input { font-size: 16px; }
+    select, textarea, input[type="number"] { width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 8px; }
+    textarea { height: 240px; }
+    .row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; }
+    button { padding: 10px 14px; border-radius: 10px; border: 1px solid #d1d5db; cursor: pointer; background: #fff; }
+    button:hover { background: #f9fafb; }
+    footer { margin-top: 24px; font-size: 12px; color: #6b7280; }
+    .badge { display:inline-block; padding:2px 8px; border-radius:999px; background:#eef2ff; color:#4338ca; font-size:12px; margin-left:6px; }
+  </style>
+  <!-- PyScript -->
+  <link rel="stylesheet" href="https://pyscript.net/releases/2024.11.1/core.css">
+  <script defer src="https://pyscript.net/releases/2024.11.1/core.js"></script>
+</head>
+<body>
+  <header>
+    <h1>FM Face Prompt Generator <span class="badge">Static</span></h1>
+    <p class="muted">Pick a region, click Generate, then copy & paste into your AI image tool (ComfyUI, SDXL, Midjourney, etc.).</p>
+  </header>
+
+  <div class="grid">
+    <div>
+      <label for="region">Region</label>
+      <select id="region"></select>
+    </div>
+
+    <div class="row">
+      <button id="generate">Generate</button>
+      <button id="copy">Copy</button>
+      <button id="newseed" title="Change the random seed">New Seed</button>
+    </div>
+
+    <div>
+      <label for="output">Output</label>
+      <textarea id="output" placeholder="Your prompt will appear here…"></textarea>
+    </div>
+  </div>
+
+  <footer>
+    <div>Tip: Click “New Seed” for a fresh variation, then “Generate”.</div>
+  </footer>
+
+  <script type="py">
+from js import document, navigator, console
+import random
+
+# ====== TODO: Replace the placeholder maps/lists with your full dictionaries from your Windows script ======
+# Keep keys identical to your script where possible.
+country_codes = {
+    # EXAMPLES — replace/extend with your full set:
+    "ENG": "English Caucasian",
+    "SCO": "Scottish Caucasian",
+    "WAL": "Welsh Caucasian",
+    "NGA": "Nigerian",
+    "GHA": "Ghanaian",
+    "KOR": "South Korean",
+    "JPN": "Japanese",
+    "THA": "Thai",
+    "BRA": "Brazilian",
+    "ARG": "Argentine",
+    "ITA": "Italian",
+    "ESP": "Spanish",
+    "POR": "Portuguese",
+    "FRA": "French",
+}
+
+regions = {
+    # EXAMPLES — replace these arrays with the 3‑letter country codes you use per region
+    "African": ["NGA","GHA"],
+    "Asian": ["KOR","JPN","THA"],
+    "Caucasian": ["ENG","SCO","WAL","FRA","ITA","ESP","POR"],
+    "South American": ["BRA","ARG"],
+    "Seasian": ["THA"],
+    "MENA": ["FRA"],  # placeholder
+    "ItalMed": ["ITA"],
+    "SpanMed": ["ESP","POR"],
+    "Scandinavian": ["FRA"],  # placeholder
+    "Central European": ["FRA"],  # placeholder
+    "EECA": ["FRA"],  # placeholder
+    "MESA": ["FRA"],  # placeholder
+    "SAMed": ["ARG"],  # placeholder
+    "YugoGreek": ["FRA"],  # placeholder
+    "Mixed-Race": ["ENG","BRA"]
+}
+
+general_hairstyles = ["Buzz cut","Crew cut","Textured crop","Slick back","Fade","Shaved Bald","Afro","Braids"]
+hair_colors = ["Jet black","Dark brown","Light brown","Blond","No Hair"]
+eye_colors = ["blue","green","grey","brown"]
+facial_hairs = ["Clean-shaven","Stubble","Goatee","Full beard","Moustache"]
+expressions = ["Neutral","Smiling","Focused","Confident"]
+unique_features = ["Freckles","Scar","Beauty mark","Ear piercings","Eyebrow slit"]
+facial_features = [
+    "round face with soft features",
+    "oval face with a strong jawline",
+    "angular face with sharp cheekbones",
+    "square face with a wide forehead"
+]
+
+# Seed so users can reshuffle deterministically if desired
+_current_seed = random.randrange(10_000_000)
+
+def reseed():
+    global _current_seed
+    _current_seed = random.randrange(10_000_000)
+
+def generate_prompt(region_key: str) -> str:
+    random.seed(_current_seed)
+    if region_key not in regions:
+        return "Unknown region."
+    code = random.choice(regions[region_key])
+    nationality = country_codes.get(code, "Nationality")
+
+    age = random.choice([17,18,19,20])
+    hairstyle = random.choice(general_hairstyles)
+    hair_color = "No Hair" if hairstyle == "Shaved Bald" else random.choice(hair_colors)
+    eyes = random.choice(eye_colors)
+    beard = random.choice(facial_hairs)
+    expr = random.choice(expressions)
+    feature = random.choice(unique_features)
+    face = random.choice(facial_features)
+
+    prompt = (
+        f"A single {nationality} male footballer, he is {age} years old with a youthful, athletic appearance, "
+        f"photo shot in the studio with {hair_color} {hairstyle} hairstyle and {beard}, "
+        f"his face has a {face}, a {expr} expression, {feature}, {eyes} eyes, "
+        f"photo partially cropped from head and neck only, sports photography studio, white seamless background, "
+        f"key light on face, soft fill, rim light, shallow depth of field, Canon DSLR photo."
+    )
+    return prompt
+
+# ------- UI wireup -------
+def populate_regions():
+    sel = document.getElementById("region")
+    # clear
+    sel.innerHTML = ""
+    keys = list(regions.keys())
+    for k in keys:
+        opt = document.createElement("option")
+        opt.value = k
+        opt.text = k
+        sel.appendChild(opt)
+    if keys:
+        sel.value = keys[0]
+
+def on_generate(event):
+    region = document.getElementById("region").value
+    out = document.getElementById("output")
+    out.value = generate_prompt(region)
+
+def on_copy(event):
+    val = document.getElementById("output").value
+    if val:
+        navigator.clipboard.writeText(val)
+
+def on_new_seed(event):
+    reseed()
+    # Optional: regenerate immediately
+    on_generate(event)
+
+populate_regions()
+document.getElementById("generate").addEventListener("click", on_generate)
+document.getElementById("copy").addEventListener("click", on_copy)
+document.getElementById("newseed").addEventListener("click", on_new_seed)
+  </script>
+</body>
+</html>
