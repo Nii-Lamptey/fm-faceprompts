@@ -572,10 +572,13 @@ function generatePrompt(regionKey){
   const face = pick(facialFeatures, r);
 
   return "A single " + nationality + " male footballer, he is " + age + " years old with a youthful, athletic appearance, " +
-         "photo shot in the studio with " + hairColor + " " + hairstyle + " hairstyle and " + beard + ", his face has a " + face + ", " +
-         "a " + expr + " expression, " + feature + ", " + eyes + " eyes, photo partially cropped from head and neck only, " +
-         "sports photography studio, white seamless background, key light on face, soft fill, rim light, " +
-         "shallow depth of field, Canon DSLR photo.";
+  "official club headshot, clean studio portrait, centered, straight-on, head and shoulders only, " +
+  "even soft clamshell lighting (frontal key + frontal fill), no harsh shadows, no patterned light, " +
+  "neutral white balance, uniform light grey or white seamless backdrop, " +
+  "85mm lens look, f/8, ISO 100, 1/125s, crisp focus on the eyes, " +
+  hairColor + " " + hairstyle + " hairstyle and " + beard + ", " +
+  "face is " + face + ", " + expr + " expression, " + feature + ", " + eyes + " eyes, " +
+  "high-quality professional studio photo.";
 }
 
 function populateRegions(){
