@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <title>FM Face Prompt Generator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Generate copy‑paste prompts for AI face renders tailored for Football Manager regens." />
+  <meta name="description" content="Generate copy-paste prompts for AI face renders tailored for Football Manager regens." />
   <style>
     :root { --w: 860px; }
     body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji'; 
@@ -21,15 +21,12 @@
     button { padding: 10px 14px; border-radius: 10px; border: 1px solid #d1d5db; cursor: pointer; background: #fff; }
     button:hover { background: #f9fafb; }
     footer { margin-top: 24px; font-size: 12px; color: #6b7280; }
-    .badge { display:inline-block; padding:2px 8px; border-radius:999px; background:#eef2ff; color:#4338ca; font-size:12px; margin-left:6px; }
+    .badge { display:inline-block; padding:2px 8px; border-radius:999px; background:#ecfeff; color:#0e7490; font-size:12px; margin-left:6px; }
   </style>
-  <!-- PyScript -->
-  <link rel="stylesheet" href="https://pyscript.net/releases/2024.11.1/core.css">
-  <script defer src="https://pyscript.net/releases/2024.11.1/core.js"></script>
 </head>
 <body>
   <header>
-    <h1>FM Face Prompt Generator <span class="badge">Static</span></h1>
+    <h1>FM Face Prompt Generator <span class="badge">No‑Python (JS)</span></h1>
     <p class="muted">Pick a region, click Generate, then copy & paste into your AI image tool (ComfyUI, SDXL, Midjourney, etc.).</p>
   </header>
 
@@ -55,174 +52,559 @@
     <div>Tip: Click “New Seed” for a fresh variation, then “Generate”.</div>
   </footer>
 
-  <script type="py">
-from js import document, navigator, console
-import random
+  <script>
+// ---- Data converted from your Python script ----
+const countryCodes = {
+  "AFG": "Afghan",
+  "AXL": "Scandinavian",
+  "ALB": "Albanian",
+  "ALG": "Algerian",
+  "ASA": "Caribbean",
+  "AND": "Andorran",
+  "ANG": "Angolan",
+  "AIA": "Anguillan",
+  "ATG": "Antiguan and Barbudan",
+  "ARG": "Argentine",
+  "ARM": "Armenian",
+  "ARU": "Aruban",
+  "AUS": "Australian",
+  "AUT": "Austrian",
+  "AZE": "Azerbaijani",
+  "BAS": "Basque",
+  "BAH": "Bahamian",
+  "BHR": "Bahraini",
+  "BAN": "Bangladeshi",
+  "BRB": "Barbadian",
+  "BLR": "Belarusian",
+  "BEL": "Belgian",
+  "BLZ": "Belizean",
+  "BEN": "Beninese",
+  "BER": "Bermudian",
+  "BHU": "Bhutanese",
+  "BOL": "Bolivian",
+  "BIH": "Bosnian",
+  "BOT": "Botswanan",
+  "BRA": "Brazilian",
+  "VGB": "British Virgin Islander",
+  "BRU": "Bruneian",
+  "BUL": "Bulgarian",
+  "BFA": "Burkinabe",
+  "BDI": "Burundian",
+  "CAM": "Cambodian",
+  "CMR": "Cameroonian",
+  "CAN": "Canadian Caucasian",
+  "CPV": "Cape Verdean",
+  "CAY": "Caymanian",
+  "CTA": "Central African",
+  "CHA": "Chadian",
+  "CHL": "Chilean",
+  "CHN": "Chinese",
+  "COL": "Colombian",
+  "COM": "Comorian",
+  "COD": "Congolese (DRC)",
+  "CGO": "Congolese (Republic)",
+  "COK": "Cook Islander",
+  "CRC": "Costa Rican",
+  "CIV": "Ivorian",
+  "CRO": "Croatian",
+  "CUB": "Cuban",
+  "CUW": "Curaçaoan",
+  "CYP": "Cypriot",
+  "CZE": "Czech",
+  "DEN": "Danish",
+  "DJI": "Djiboutian",
+  "DMA": "Dominican",
+  "DOM": "Dominican (Rep.)",
+  "ECU": "Ecuadorian",
+  "EGY": "Egyptian",
+  "SLV": "Salvadoran",
+  "ENG": "English Caucasian",
+  "EQG": "Equatorial Guinean",
+  "ERI": "Eritrean",
+  "EST": "Estonian",
+  "SWZ": "Swazi",
+  "ETH": "Ethiopian",
+  "FRO": "Faroese",
+  "FIJ": "Fijian",
+  "FIN": "Finnish",
+  "FRA": "French",
+  "TAH": "Tahitian",
+  "GAB": "Gabonese",
+  "GAM": "Gambian",
+  "GEO": "Georgian",
+  "GER": "German",
+  "GHA": "Ghanaian",
+  "GIB": "Gibraltar Caucasian",
+  "GRE": "Greek",
+  "GRL": "Greenlandic",
+  "GRN": "Grenadian",
+  "GLP": "Guadeloupe",
+  "GUM": "Guamanian",
+  "GUA": "Guatemalan",
+  "GUI": "Guinean",
+  "GNB": "Bissau-Guinean",
+  "GUY": "Guyanese",
+  "HAI": "Haitian",
+  "HON": "Honduran",
+  "HKG": "Hong Kong",
+  "HUN": "Hungarian",
+  "ISL": "Icelandic",
+  "IND": "Indian",
+  "IDN": "Indonesian",
+  "IRN": "Iranian",
+  "IRQ": "Iraqi",
+  "IRL": "Irish Caucasian",
+  "ISR": "Israeli",
+  "ITA": "Italian",
+  "JAM": "Jamaican",
+  "JPN": "Japanese",
+  "JOR": "Jordanian",
+  "KAZ": "Kazakh",
+  "KEN": "Kenyan",
+  "KHM": "Cambodian",
+  "KIR": "I-Kiribati",
+  "PRK": "North Korean",
+  "KOR": "South Korean",
+  "KOS": "Kosovar",
+  "KUW": "Kuwaiti",
+  "KGZ": "Kyrgyz",
+  "LAO": "Laotian",
+  "LVA": "Latvian",
+  "LBN": "Lebanese",
+  "LES": "Lesothoan",
+  "LBR": "Liberian",
+  "LBY": "Libyan",
+  "LIE": "Liechtensteiner",
+  "LTU": "Lithuanian",
+  "LUX": "Luxembourger",
+  "MAC": "Macanese",
+  "MAD": "Malagasy",
+  "MWI": "Malawian",
+  "MAS": "Malaysian",
+  "MDV": "Maldivian",
+  "MLI": "Malian",
+  "MLT": "Maltese",
+  "MTQ": "Martinican",
+  "MTN": "Mauritanian",
+  "MUS": "Mauritian",
+  "MEX": "Mexican",
+  "FSM": "Micronesian",
+  "MDA": "Moldovan",
+  "MON": "Monégasque",
+  "MNG": "Mongolian",
+  "MNE": "Montenegrin",
+  "MSR": "Montserratian",
+  "MAR": "Moroccan",
+  "MOZ": "Mozambican",
+  "MX1": "Mixed Jamaican-British",
+  "MX2": "Mixed Nigerian-British",
+  "MX3": "Mixed Ghanaian-British",
+  "MX4": "Mixed South African-British",
+  "MX5": "Mixed Somali-British",
+  "MX6": "Mixed Ethiopian-British",
+  "MX7": "Mixed Kenyan-British",
+  "MX8": "Mixed Jamaican-British",
+  "MX9": "Mixed Zimbabwean-British",
+  "MX10": "Mixed Barbadian-British",
+  "MX11": "Mixed Trinidadian-British",
+  "MX12": "Mixed Saint Lucian-British",
+  "MX13": "Mixed Jamaican-American",
+  "MX14": "Mixed Nigerian-American",
+  "MX15": "Mixed Ghanaian-American",
+  "MX16": "Mixed Ethiopian-American",
+  "MX17": "Mixed Somali-American",
+  "MX18": "Mixed South African-American",
+  "MX19": "Mixed Kenyan-American",
+  "MX20": "Mixed Kenyan-American",
+  "MX21": "Mixed Liberian-American",
+  "MX22": "Mixed Haitian-American",
+  "MX23": "Mixed Zimbabwean-American",
+  "MX24": "Mixed Rwandan-American",
+  "MX25": "Mixed Congolese-American",
+  "MX26": "Mixed Senegalese-French",
+  "MX27": "Mixed Ivorian-French",
+  "MX28": "Mixed Malian-French",
+  "MX29": "Mixed Congolese-French",
+  "MX30": "Mixed Haitian-French",
+  "MYA": "Burmese",
+  "NAM": "Namibian",
+  "NEP": "Nepalese",
+  "NED": "Dutch",
+  "NCL": "New Caledonian",
+  "NZL": "New Zealander",
+  "NCA": "Nicaraguan",
+  "NIG": "Nigerien",
+  "NGA": "Nigerian",
+  "NIU": "Niuean",
+  "NIR": "Caucasian Northern Irish",
+  "NMI": "Northern Mariana Islander",
+  "MKD": "Macedonian",
+  "NOR": "Norwegian",
+  "OMA": "Omani",
+  "PAK": "Pakistani",
+  "PLW": "Palauan",
+  "PLE": "Palestinian",
+  "PAN": "Panamanian",
+  "PNG": "Papua New Guinean",
+  "PAR": "Paraguayan",
+  "PER": "Peruvian",
+  "PHI": "Filipino",
+  "POL": "Polish",
+  "POR": "Portuguese",
+  "PUR": "Puerto Rican",
+  "QAT": "Qatari",
+  "REU": "Réunionese",
+  "ROU": "Romanian",
+  "RUS": "Russian",
+  "RWA": "Rwandan",
+  "SKN": "Kittitian",
+  "LCA": "Saint Lucian",
+  "SMN": "Samoan",
+  "VIN": "Vincentian",
+  "STP": "São Toméan",
+  "KSA": "Saudi",
+  "SCO": "Scottish Caucasian",
+  "SEN": "Senegalese",
+  "SMR": "Sammarinese",
+  "SRB": "Serbian",
+  "SEY": "Seychellois",
+  "SLE": "Sierra Leonean",
+  "SIN": "Singaporean",
+  "SMA": "Sint Maarten",
+  "SVK": "Slovak",
+  "SVN": "Slovenian",
+  "SOL": "Solomon Islander",
+  "SOM": "Somali",
+  "RSA": "South African",
+  "SSD": "South Sudanese",
+  "ESP": "Spanish",
+  "SRI": "Sri Lankan",
+  "SDN": "Sudanese",
+  "SUR": "Surinamese",
+  "SWE": "Swedish",
+  "SUI": "Swiss",
+  "SYR": "Syrian",
+  "TPE": "Taiwanese",
+  "TJK": "Tajik",
+  "TAN": "Tanzanian",
+  "THA": "Thai",
+  "TLS": "Timorese",
+  "TOG": "Togolese",
+  "TGA": "Tongan",
+  "TRI": "Trinidadian",
+  "TUN": "Tunisian",
+  "TUR": "Turkish",
+  "TKM": "Turkmen",
+  "TCA": "Turks and Caicos Islander",
+  "TUV": "Tuvaluan",
+  "UGA": "Ugandan",
+  "UKR": "Ukrainian",
+  "UAE": "Emirati",
+  "GBR": "British",
+  "USA": "American Caucasian",
+  "VIR": "U.S. Virgin Islander",
+  "URU": "Uruguayan",
+  "UZB": "Uzbek",
+  "VAN": "Ni-Vanuatu",
+  "VAT": "Vatican",
+  "VEN": "Venezuelan",
+  "VIE": "Vietnamese",
+  "WAL": "Welsh Caucasian",
+  "YEM": "Yemeni",
+  "ZAM": "Zambian",
+  "ZIM": "Zimbabwean",
+  "LIB": "Lebanese",
+  "GUF": "French Guianese",
+  "WFI": "Wallis and Futuna Islander",
+  "SUD": "Sudanese",
+  "MAY": "Mahoran",
+  "BOE": "Bonairian",
+  "BLM": "Saint Barthélemy Islander",
+  "SPM": "Saint Pierre and Miquelon Islander"
+};
+const regions = {
+  "African": [
+    "NGA",
+    "ETH",
+    "BLZ",
+    "TOG",
+    "COD",
+    "ZAM",
+    "TRI",
+    "KEN",
+    "GHA",
+    "UGA",
+    "DOM",
+    "SDN",
+    "SUR",
+    "JAM",
+    "SUD",
+    "CMR",
+    "CIV"
+  ],
+  "Asian": [
+    "CHN",
+    "HKG",
+    "PRK",
+    "KOR",
+    "TPE",
+    "JPN"
+  ],
+  "Caucasian": [
+    "CAN",
+    "ENG",
+    "GIB",
+    "ENG",
+    "NIR",
+    "ENG",
+    "SCO",
+    "ENG",
+    "WAL",
+    "ENG",
+    "IRL",
+    "USA",
+    "ENG"
+  ],
+  "Central European": [
+    "AUS",
+    "AUT",
+    "BEL",
+    "FRA",
+    "GER",
+    "LIE",
+    "LUX",
+    "SVK",
+    "NED",
+    "POL",
+    "SUI"
+  ],
+  "EECA": [
+    "ARM",
+    "AZE",
+    "BLR",
+    "BIH",
+    "BUL",
+    "CRO",
+    "CZE",
+    "EST",
+    "GEO",
+    "HUN",
+    "LVA",
+    "LTU",
+    "MDA",
+    "MNE",
+    "MKD",
+    "POL",
+    "ROU",
+    "RUS",
+    "SRB",
+    "SVK",
+    "SVN",
+    "UKR",
+    "UZB"
+  ],
+  "ItalMed": [
+    "ITA",
+    "MLT",
+    "SMR"
+  ],
+  "MENA": [
+    "BHR",
+    "EGY",
+    "IRN",
+    "IRQ",
+    "ISR",
+    "JOR",
+    "KUW",
+    "LBN",
+    "LBY",
+    "MAR",
+    "OMA",
+    "QAT",
+    "UAE",
+    "KSA",
+    "SYR",
+    "TUN",
+    "TUR",
+    "ALG",
+    "YEM"
+  ],
+  "MESA": [
+    "AFG",
+    "BHR",
+    "BAN",
+    "BHU",
+    "IND",
+    "IRN",
+    "IRQ",
+    "JOR",
+    "KUW",
+    "LBN",
+    "MDV",
+    "NEP",
+    "OMA",
+    "PAK",
+    "PLE",
+    "QAT",
+    "KSA",
+    "SYR",
+    "UAE",
+    "YEM"
+  ],
+  "SAMed": [
+    "ARG",
+    "URU"
+  ],
+  "Scandinavian": [
+    "DEN",
+    "FRO",
+    "FIN",
+    "ISL",
+    "NOR",
+    "SWE"
+  ],
+  "Seasian": [
+    "KHM",
+    "IDN",
+    "LAO",
+    "MYA",
+    "MAS",
+    "PHI",
+    "SIN",
+    "THA",
+    "VIE"
+  ],
+  "South American": [
+    "BOL",
+    "BRA",
+    "CHL",
+    "COL",
+    "CRC",
+    "MEX",
+    "ECU",
+    "PAR",
+    "PER",
+    "PUR",
+    "VEN"
+  ],
+  "SpanMed": [
+    "AND",
+    "ESP",
+    "POR"
+  ],
+  "YugoGreek": [
+    "ALB",
+    "BIH",
+    "BUL",
+    "CRO",
+    "CYP",
+    "GRE",
+    "KOS",
+    "MKD",
+    "MNE",
+    "SRB",
+    "SVN"
+  ],
+  "Mixed-Race": [
+    "MX1",
+    "MX2",
+    "MX3",
+    "MX4",
+    "MX5",
+    "MX6",
+    "MX7",
+    "MX8",
+    "MX9",
+    "MX10",
+    "MX11",
+    "MX12",
+    "MX13",
+    "MX14",
+    "MX15",
+    "MX16",
+    "MX17",
+    "MX18",
+    "MX19",
+    "MX20",
+    "MX21",
+    "MX22",
+    "MX23",
+    "MX24",
+    "MX25",
+    "MX26",
+    "MX27",
+    "MX28",
+    "MX29",
+    "MX30"
+  ]
+};
 
-# ====== TODO: Replace the placeholder maps/lists with your full dictionaries from your Windows script ======
-# Keep keys identical to your script where possible.
-country_codes = {
-    "AFG": "Afghan", "AXL": "Scandinavian", "ALB": "Albanian", "ALG": "Algerian",
-    "ASA": "Caribbean", "AND": "Andorran", "ANG": "Angolan", "AIA": "Anguillan",
-    "ATG": "Antiguan and Barbudan", "ARG": "Argentine", "ARM": "Armenian", "ARU": "Aruban",
-    "AUS": "Australian", "AUT": "Austrian", "AZE": "Azerbaijani", "BAS": "Basque",
-    "BAH": "Bahamian", "BHR": "Bahraini", "BAN": "Bangladeshi", "BRB": "Barbadian",
-    "BLR": "Belarusian", "BEL": "Belgian", "BLZ": "Belizean", "BEN": "Beninese",
-    "BER": "Bermudian", "BHU": "Bhutanese", "BOL": "Bolivian", "BIH": "Bosnian",
-    "BOT": "Botswanan", "BRA": "Brazilian", "VGB": "British Virgin Islander", "BRU": "Bruneian",
-    "BUL": "Bulgarian", "BFA": "Burkinabe", "BDI": "Burundian", "CAM": "Cambodian",
-    "CMR": "Cameroonian", "CAN": "Canadian Caucasian", "CPV": "Cape Verdean", "CAY": "Caymanian",
-    "CTA": "Central African", "CHA": "Chadian", "CHL": "Chilean", "CHN": "Chinese",
-    "COL": "Colombian", "COM": "Comorian", "COD": "Congolese (DRC)", "CGO": "Congolese (Republic)",
-    "COK": "Cook Islander", "CRC": "Costa Rican", "CIV": "Ivorian", "CRO": "Croatian",
-    "CUB": "Cuban", "CUW": "Curaçaoan", "CYP": "Cypriot", "CZE": "Czech",
-    "DEN": "Danish", "DJI": "Djiboutian", "DMA": "Dominican", "DOM": "Dominican (Rep.)",
-    "ECU": "Ecuadorian", "EGY": "Egyptian", "SLV": "Salvadoran", "ENG": "English Caucasian",
-    "EQG": "Equatorial Guinean", "ERI": "Eritrean", "EST": "Estonian", "SWZ": "Swazi",
-    "ETH": "Ethiopian", "FRO": "Faroese", "FIJ": "Fijian", "FIN": "Finnish",
-    "FRA": "French", "TAH": "Tahitian", "GAB": "Gabonese", "GAM": "Gambian",
-    "GEO": "Georgian", "GER": "German", "GHA": "Ghanaian", "GIB": "Gibraltar Caucasian",
-    "GRE": "Greek", "GRL": "Greenlandic", "GRN": "Grenadian", "GLP": "Guadeloupe",
-    "GUM": "Guamanian", "GUA": "Guatemalan", "GUI": "Guinean", "GNB": "Bissau-Guinean",
-    "GUY": "Guyanese", "HAI": "Haitian", "HON": "Honduran", "HKG": "Hong Kong",
-    "HUN": "Hungarian", "ISL": "Icelandic", "IND": "Indian", "IDN": "Indonesian", 
-    "IRN": "Iranian", "IRQ": "Iraqi", "IRL": "Irish Caucasian", "ISR": "Israeli",
-    "ITA": "Italian", "JAM": "Jamaican", "JPN": "Japanese", "JOR": "Jordanian",
-    "KAZ": "Kazakh", "KEN": "Kenyan", "KHM": "Cambodian", 
-    "KIR": "I-Kiribati", "PRK": "North Korean",
-    "KOR": "South Korean", "KOS": "Kosovar", "KUW": "Kuwaiti", "KGZ": "Kyrgyz",
-    "LAO": "Laotian", "LVA": "Latvian", "LBN": "Lebanese", "LES": "Lesothoan",
-    "LBR": "Liberian", "LBY": "Libyan", "LIE": "Liechtensteiner", "LTU": "Lithuanian",
-    "LUX": "Luxembourger", "MAC": "Macanese", "MAD": "Malagasy", "MWI": "Malawian",
-    "MAS": "Malaysian", "MDV": "Maldivian", "MLI": "Malian", "MLT": "Maltese",
-    "MTQ": "Martinican", "MTN": "Mauritanian", "MUS": "Mauritian", "MEX": "Mexican",
-    "FSM": "Micronesian", "MDA": "Moldovan", "MON": "Monégasque", "MNG": "Mongolian",
-    "MNE": "Montenegrin", "MSR": "Montserratian", "MAR": "Moroccan", "MOZ": "Mozambican", "MX1": "Mixed Jamaican-British",
-    "MX2": "Mixed Nigerian-British", "MX3": "Mixed Ghanaian-British", "MX4": "Mixed South African-British",     "MX5": "Mixed Somali-British",
-    "MX6": "Mixed Ethiopian-British", "MX7": "Mixed Kenyan-British", "MX8": "Mixed Jamaican-British", "MX9": "Mixed Zimbabwean-British", "MX10": "Mixed Barbadian-British", "MX11": "Mixed Trinidadian-British", "MX12": "Mixed Saint Lucian-British", "MX13": "Mixed Jamaican-American", "MX14": "Mixed Nigerian-American",   "MX15": "Mixed Ghanaian-American", "MX16": "Mixed Ethiopian-American", "MX17": "Mixed Somali-American", "MX18": "Mixed South African-American",  "MX19": "Mixed Kenyan-American", "MX20": "Mixed Kenyan-American", "MX21": "Mixed Liberian-American", "MX22": "Mixed Haitian-American", "MX23": "Mixed Zimbabwean-American", "MX24": "Mixed Rwandan-American", "MX25": "Mixed Congolese-American", "MX26": "Mixed Senegalese-French", "MX27": "Mixed Ivorian-French",  "MX28": "Mixed Malian-French",  "MX29": "Mixed Congolese-French",   "MX30": "Mixed Haitian-French",
-    "MYA": "Burmese", "NAM": "Namibian", "NEP": "Nepalese", "NED": "Dutch",
-    "NCL": "New Caledonian", "NZL": "New Zealander", "NCA": "Nicaraguan", "NIG": "Nigerien",
-    "NGA": "Nigerian", "NIU": "Niuean", "NIR": "Caucasian Northern Irish", "NMI": "Northern Mariana Islander",
-    "MKD": "Macedonian", "NOR": "Norwegian", "OMA": "Omani", "PAK": "Pakistani",
-    "PLW": "Palauan", "PLE": "Palestinian", "PAN": "Panamanian", "PNG": "Papua New Guinean",
-    "PAR": "Paraguayan", "PER": "Peruvian", "PHI": "Filipino", "POL": "Polish",
-    "POR": "Portuguese", "PUR": "Puerto Rican", "QAT": "Qatari", "REU": "Réunionese",
-    "ROU": "Romanian", "RUS": "Russian", "RWA": "Rwandan", "SKN": "Kittitian",
-    "LCA": "Saint Lucian", "SMN": "Samoan", "VIN": "Vincentian", "STP": "São Toméan",
-    "KSA": "Saudi", "SCO": "Scottish Caucasian", "SEN": "Senegalese", "SMR": "Sammarinese", "SRB": "Serbian",
-    "SEY": "Seychellois", "SLE": "Sierra Leonean", "SIN": "Singaporean", "SMA": "Sint Maarten",
-    "SVK": "Slovak", "SVN": "Slovenian", "SOL": "Solomon Islander", "SOM": "Somali",
-    "RSA": "South African", "SSD": "South Sudanese", "ESP": "Spanish", "SRI": "Sri Lankan",
-    "SDN": "Sudanese", "SUR": "Surinamese", "SWE": "Swedish", "SUI": "Swiss",
-    "SYR": "Syrian", "TPE": "Taiwanese", "TJK": "Tajik", "TAN": "Tanzanian",
-    "THA": "Thai", "TLS": "Timorese", "TOG": "Togolese", "TGA": "Tongan",
-    "TRI": "Trinidadian", "TUN": "Tunisian", "TUR": "Turkish", "TKM": "Turkmen",
-    "TCA": "Turks and Caicos Islander", "TUV": "Tuvaluan", "UGA": "Ugandan", "UKR": "Ukrainian",
-    "UAE": "Emirati", "GBR": "British", "USA": "American Caucasian", "VIR": "U.S. Virgin Islander",
-    "URU": "Uruguayan", "UZB": "Uzbek", "VAN": "Ni-Vanuatu", "VAT": "Vatican",
-    "VEN": "Venezuelan", "VIE": "Vietnamese", "WAL": "Welsh Caucasian", "YEM": "Yemeni",
-    "ZAM": "Zambian", "ZIM": "Zimbabwean", "LIB": "Lebanese", "GUF": "French Guianese",
-    "WFI": "Wallis and Futuna Islander", "SUD": "Sudanese", "MAY": "Mahoran", "BOE": "Bonairian",
-    "BLM": "Saint Barthélemy Islander", "SPM": "Saint Pierre and Miquelon Islander"
+// Trait lists (adjust to mirror your desktop logic as needed)
+const generalHairstyles = ["Buzz cut","Crew cut","Textured crop","Slick back","Fade","Shaved Bald","Afro","Braids"];
+const hairColors = ["Jet black","Dark brown","Light brown","Blond","No Hair"];
+const eyeColors = ["blue","green","grey","brown"];
+const facialHairs = ["Clean-shaven","Stubble","Goatee","Full beard","Moustache"];
+const expressions = ["Neutral","Smiling","Focused","Confident"];
+const uniqueFeatures = ["Freckles","Scar","Beauty mark","Ear piercings","Eyebrow slit"];
+const facialFeatures = [
+  "round face with soft features",
+  "oval face with a strong jawline",
+  "angular face with sharp cheekbones",
+  "square face with a wide forehead"
+];
+
+let currentSeed = Math.floor(Math.random() * 10000000);
+function rng(seed){ return function(){ seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; }; }
+function pick(arr, r){ return arr[Math.floor(r() * arr.length)]; }
+
+function generatePrompt(regionKey){
+  if(!regions[regionKey] || regions[regionKey].length===0) return "Unknown region.";
+  const r = rng(currentSeed);
+  const code = pick(regions[regionKey], r);
+  const nationality = countryCodes[code] || "Nationality";
+  const age = pick([17,18,19,20], r);
+  const hairstyle = pick(generalHairstyles, r);
+  const hairColor = (hairstyle === "Shaved Bald") ? "No Hair" : pick(hairColors, r);
+  const eyes = pick(eyeColors, r);
+  const beard = pick(facialHairs, r);
+  const expr = pick(expressions, r);
+  const feature = pick(uniqueFeatures, r);
+  const face = pick(facialFeatures, r);
+
+  return "A single " + nationality + " male footballer, he is " + age + " years old with a youthful, athletic appearance, " +
+         "photo shot in the studio with " + hairColor + " " + hairstyle + " hairstyle and " + beard + ", his face has a " + face + ", " +
+         "a " + expr + " expression, " + feature + ", " + eyes + " eyes, photo partially cropped from head and neck only, " +
+         "sports photography studio, white seamless background, key light on face, soft fill, rim light, " +
+         "shallow depth of field, Canon DSLR photo.";
 }
 
-regions = {
-	"African": ["NGA", "ETH", "BLZ", "TOG", "COD", "ZAM", "TRI", "KEN", "GHA", "UGA", "DOM", "SDN", "SUR", "JAM", "SUD", "CMR", "CIV"],
-    "Asian": ["CHN", "HKG", "PRK", "KOR", "TPE", "JPN"],
-    "Caucasian": ["CAN", "ENG", "GIB", "ENG", "NIR", "ENG", "SCO", "ENG", "WAL", "ENG", "IRL", "USA", "ENG"],
-    "Central European": ["AUS", "AUT", "BEL", "FRA", "GER", "LIE", "LUX", "SVK", "NED", "POL", "SUI"],
-    "EECA": ["ARM", "AZE", "BLR", "BIH", "BUL", "CRO", "CZE", "EST", "GEO", "HUN", "LVA", "LTU", "MDA", "MNE", "MKD", "POL", "ROU", "RUS", "SRB", "SVK", "SVN", "UKR", "UZB"],
-    "ItalMed": ["ITA", "MLT", "SMR"],
-    "MENA": ["BHR", "EGY", "IRN", "IRQ", "ISR", "JOR", "KUW", "LBN", "LBY", "MAR", "OMA", "QAT", "UAE", "KSA", "SYR", "TUN", "TUR", "ALG", "YEM"],
-    "MESA": ["AFG", "BHR", "BAN", "BHU", "IND", "IRN", "IRQ", "JOR", "KUW", "LBN", "MDV", "NEP", "OMA", "PAK", "PLE", "QAT", "KSA", "SYR", "UAE", "YEM"],
-    "SAMed": ["ARG", "URU"],
-    "Scandinavian": ["DEN", "FRO", "FIN", "ISL", "NOR", "SWE"],
-    "Seasian": ["KHM", "IDN", "LAO", "MYA", "MAS", "PHI", "SIN", "THA", "VIE"], #"TLS" "BRU"
-    "South American": ["BOL", "BRA", "CHL", "COL", "CRC", "MEX", "ECU", "PAR", "PER", "PUR", "VEN"],
-    "SpanMed": ["AND", "ESP", "POR"],
-    "YugoGreek": ["ALB", "BIH", "BUL", "CRO", "CYP", "GRE", "KOS", "MKD", "MNE", "SRB", "SVN"],
-    "Mixed-Race": ["MX1", "MX2", "MX3", "MX4", "MX5", "MX6", "MX7", "MX8", "MX9", "MX10",
-    "MX11", "MX12", "MX13", "MX14", "MX15", "MX16", "MX17", "MX18", "MX19", "MX20",
-    "MX21", "MX22", "MX23", "MX24", "MX25", "MX26", "MX27", "MX28", "MX29", "MX30"]
+function populateRegions(){
+  const sel = document.getElementById("region");
+  sel.innerHTML = "";
+  const keys = Object.keys(regions);
+  for(const k of keys){
+    const opt = document.createElement("option");
+    opt.value = k; opt.textContent = k;
+    sel.appendChild(opt);
+  }
+  if(keys.length) sel.value = keys[0];
 }
-general_hairstyles = ["Buzz cut","Crew cut","Textured crop","Slick back","Fade","Shaved Bald","Afro","Braids"]
-hair_colors = ["Jet black","Dark brown","Light brown","Blond","No Hair"]
-eye_colors = ["blue","green","grey","brown"]
-facial_hairs = ["Clean-shaven","Stubble","Goatee","Full beard","Moustache"]
-expressions = ["Neutral","Smiling","Focused","Confident"]
-unique_features = ["Freckles","Scar","Beauty mark","Ear piercings","Eyebrow slit"]
-facial_features = [
-    "round face with soft features",
-    "oval face with a strong jawline",
-    "angular face with sharp cheekbones",
-    "square face with a wide forehead"
-]
 
-# Seed so users can reshuffle deterministically if desired
-_current_seed = random.randrange(10_000_000)
+document.getElementById("generate").addEventListener("click", ()=>{
+  const region = document.getElementById("region").value;
+  document.getElementById("output").value = generatePrompt(region);
+});
+document.getElementById("copy").addEventListener("click", async ()=>{
+  const val = document.getElementById("output").value;
+  if(val) await navigator.clipboard.writeText(val);
+});
+document.getElementById("newseed").addEventListener("click", ()=>{
+  currentSeed = Math.floor(Math.random() * 10000000);
+  const region = document.getElementById("region").value;
+  if(region) document.getElementById("output").value = generatePrompt(region);
+});
 
-def reseed():
-    global _current_seed
-    _current_seed = random.randrange(10_000_000)
-
-def generate_prompt(region_key: str) -> str:
-    random.seed(_current_seed)
-    if region_key not in regions:
-        return "Unknown region."
-    code = random.choice(regions[region_key])
-    nationality = country_codes.get(code, "Nationality")
-
-    age = random.choice([17,18,19,20])
-    hairstyle = random.choice(general_hairstyles)
-    hair_color = "No Hair" if hairstyle == "Shaved Bald" else random.choice(hair_colors)
-    eyes = random.choice(eye_colors)
-    beard = random.choice(facial_hairs)
-    expr = random.choice(expressions)
-    feature = random.choice(unique_features)
-    face = random.choice(facial_features)
-
-    prompt = (
-        f"A single {nationality} male footballer, he is {age} years old with a youthful, athletic appearance, "
-        f"photo shot in the studio with {hair_color} {hairstyle} hairstyle and {beard}, "
-        f"his face has a {face}, a {expr} expression, {feature}, {eyes} eyes, "
-        f"photo partially cropped from head and neck only, sports photography studio, white seamless background, "
-        f"key light on face, soft fill, rim light, shallow depth of field, Canon DSLR photo."
-    )
-    return prompt
-
-# ------- UI wireup -------
-def populate_regions():
-    sel = document.getElementById("region")
-    # clear
-    sel.innerHTML = ""
-    keys = list(regions.keys())
-    for k in keys:
-        opt = document.createElement("option")
-        opt.value = k
-        opt.text = k
-        sel.appendChild(opt)
-    if keys:
-        sel.value = keys[0]
-
-def on_generate(event):
-    region = document.getElementById("region").value
-    out = document.getElementById("output")
-    out.value = generate_prompt(region)
-
-def on_copy(event):
-    val = document.getElementById("output").value
-    if val:
-        navigator.clipboard.writeText(val)
-
-def on_new_seed(event):
-    reseed()
-    # Optional: regenerate immediately
-    on_generate(event)
-
-populate_regions()
-document.getElementById("generate").addEventListener("click", on_generate)
-document.getElementById("copy").addEventListener("click", on_copy)
-document.getElementById("newseed").addEventListener("click", on_new_seed)
+populateRegions();
   </script>
 </body>
 </html>
