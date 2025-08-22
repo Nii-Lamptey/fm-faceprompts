@@ -581,7 +581,7 @@ const generalHairstyles = [
   // Bald
   "Shaved Bald","Close shave","Clean-shaven scalp","Razor-shaved head","Clean bald",
 "Zero-guard buzz","Buzzed to skin","Grade 0 buzz","Very tight buzz (0)"];
-const hairColors = ["Jet black","Black-brown","Dark brown","Medium brown","Light brown",
+const hairColors = ["Jet black","Black-brown","Dark brown","Medium brown","Light brown", "black", "brown",
   "Dirty blond","Blond","Platinum blond","Auburn","Ginger","Dyed white-grey","Strawberry blond","No Hair"];
 const eyeColors = ["blue","green","grey","brown"];
 const facialHairs = ["Clean-shaven", "5 o'clock shadow",  "Light stubble",  "Short stubble",
@@ -661,7 +661,7 @@ function generatePrompt(regionKey){
   const r = rng(currentSeed);
   const code = pick(regions[regionKey], r);
   const nationality = countryCodes[code] || "Nationality";
-  const age = pick([17,18,19,20], r);
+  const age = pick([17,18,19,20,21], r);
   const hairstyle = pick(generalHairstyles, r);
   const hairColor = (hairstyle === "Shaved Bald") ? "No Hair" : pick(hairColors, r);
   const eyes = pick(eyeColors, r);
