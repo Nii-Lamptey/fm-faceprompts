@@ -655,10 +655,6 @@ let currentSeed = Math.floor(Math.random() * 10000000);
 function rng(seed){ return function(){ seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; }; }
 function pick(arr, r){ return arr[Math.floor(r() * arr.length)]; }
 
-let currentSeed = Math.floor(Math.random() * 10000000);
-function rng(seed){ return function(){ seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; }; }
-function pick(arr, r){ return arr[Math.floor(r() * arr.length)]; }
-
 // === Smart eye colour by region ===
 const STRICT_BROWN_FOR = new Set(["African", "Asian", "Seasian", "MESA"]);
 
@@ -697,9 +693,6 @@ function eyeFor(regionKey, rfn = Math.random) {
   return pickWeighted(dist, rfn);
 }
 
-function generatePrompt(regionKey){
-
-    
 function generatePrompt(regionKey){
   if(!regions[regionKey] || regions[regionKey].length===0) return "Unknown region.";
   const r = rng(currentSeed);
