@@ -655,6 +655,51 @@ let currentSeed = Math.floor(Math.random() * 10000000);
 function rng(seed){ return function(){ seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; }; }
 function pick(arr, r){ return arr[Math.floor(r() * arr.length)]; }
 
+let currentSeed = Math.floor(Math.random() * 10000000);
+function rng(seed){ return function(){ seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; }; }
+function pick(arr, r){ return arr[Math.floor(r() * arr.length)]; }
+
+// === Smart eye colour by region ===
+const STRICT_BROWN_FOR = new Set(["African", "Asian", "Seasian", "MESA"]);
+
+const EYE_BY_REGION = {
+  African:           { Brown: 1.00 },
+  Asian:             { Brown: 1.00 },
+  Seasian:           { Brown: 1.00 },
+  MESA:              { Brown: 1.00 },
+  MENA:              { Brown: 0.98, Grey: 0.02 },
+  "South American":  { Brown: 0.95, Green: 0.03, Blue: 0.02 },
+  "Central European":{ Brown: 0.50, Blue: 0.30, Green: 0.15, Grey: 0.05 },
+  Scandinavian:      { Blue: 0.50, Green: 0.20, Grey: 0.15, Brown: 0.15 },
+  Caucasian:         { Blue: 0.40, Brown: 0.35, Green: 0.20, Grey: 0.05 },
+  SpanMed:           { Brown: 0.90, Green: 0.07, Blue: 0.03 },
+  ItalMed:           { Brown: 0.92, Green: 0.05, Blue: 0.03 },
+  YugoGreek:         { Brown: 0.85, Green: 0.10, Blue: 0.05 },
+  EECA:              { Brown: 0.60, Blue: 0.25, Green: 0.10, Grey: 0.05 },
+  SAMed:             { Brown: 0.90, Green: 0.06, Blue: 0.04 },
+  "Mixed-Race":      { Brown: 0.60, Blue: 0.20, Green: 0.15, Grey: 0.05 }
+};
+
+function pickWeighted(weights, rfn = Math.random) {
+  let total = 0;
+  for (const v of Object.values(weights)) total += v;
+  let t = rfn() * total;
+  for (const [k, v] of Object.entries(weights)) {
+    t -= v;
+    if (t <= 0) return k;
+  }
+  return Object.keys(weights)[0];
+}
+
+function eyeFor(regionKey, rfn = Math.random) {
+  if (STRICT_BROWN_FOR.has(regionKey)) return "Brown";
+  const dist = EYE_BY_REGION[regionKey] || EYE_BY_REGION["Caucasian"];
+  return pickWeighted(dist, rfn);
+}
+
+function generatePrompt(regionKey){
+
+    
 function generatePrompt(regionKey){
   if(!regions[regionKey] || regions[regionKey].length===0) return "Unknown region.";
   const r = rng(currentSeed);
@@ -663,7 +708,7 @@ function generatePrompt(regionKey){
   const age = pick([17,18,19,20,21], r);
   const hairstyle = pick(generalHairstyles, r);
   const hairColor = (hairstyle === "Shaved Bald") ? "No Hair" : pick(hairColors, r);
-  const eyes = pick(eyeColors, r);
+  const eyes = eyeFor(regionKey, r);
   const beard = pick(facialHairs, r);
   const expr = pick(expressions, r);
   const feature = pick(uniqueFeatures, r);
