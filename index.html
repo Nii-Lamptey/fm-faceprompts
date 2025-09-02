@@ -655,6 +655,66 @@ let currentSeed = Math.floor(Math.random() * 10000000);
 function rng(seed){ return function(){ seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; }; }
 function pick(arr, r){ return arr[Math.floor(r() * arr.length)]; }
 
+// === Hair colour logic (natural + dyed by region) ===
+const BALDISH = /(shaved|clean[- ]?shaven|razor[- ]?shaved|zero-guard|buzzed to skin|grade 0|very tight buzz)/i;
+
+// Natural colour distributions by region
+const HAIR_NATURAL_BY_REGION = {
+  African: { "Jet black":0.55,"Black-brown":0.35,"Dark brown":0.09,"Medium brown":0.01 },
+  Asian:   { "Jet black":0.62,"Black-brown":0.25,"Dark brown":0.11,"Medium brown":0.02 },
+  Seasian: { "Jet black":0.60,"Black-brown":0.27,"Dark brown":0.10,"Medium brown":0.03 },
+  MESA:    { "Jet black":0.40,"Black-brown":0.32,"Dark brown":0.20,"Medium brown":0.06,"Light brown":0.02 },
+  MENA:    { "Jet black":0.38,"Black-brown":0.32,"Dark brown":0.20,"Medium brown":0.07,"Light brown":0.02,"Auburn":0.01 },
+  "South American":      { "Black-brown":0.30,"Dark brown":0.40,"Medium brown":0.20,"Light brown":0.08,"Auburn":0.02 },
+  "Central European":    { "Black-brown":0.18,"Dark brown":0.28,"Medium brown":0.24,"Light brown":0.14,"Dirty blond":0.08,"Blond":0.06,"Auburn":0.02 },
+  Scandinavian:          { "Dark brown":0.18,"Medium brown":0.22,"Light brown":0.20,"Dirty blond":0.20,"Blond":0.17,"Platinum blond":0.02,"Auburn":0.01 },
+  Caucasian:             { "Black-brown":0.18,"Dark brown":0.28,"Medium brown":0.24,"Light brown":0.12,"Dirty blond":0.08,"Blond":0.06,"Auburn":0.03,"Ginger":0.01 },
+  SpanMed:               { "Black-brown":0.30,"Dark brown":0.42,"Medium brown":0.20,"Light brown":0.06,"Auburn":0.02 },
+  ItalMed:               { "Black-brown":0.36,"Dark brown":0.40,"Medium brown":0.18,"Light brown":0.05,"Auburn":0.01 },
+  YugoGreek:             { "Black-brown":0.28,"Dark brown":0.38,"Medium brown":0.22,"Light brown":0.10,"Auburn":0.02 },
+  EECA:                  { "Jet black":0.10,"Black-brown":0.28,"Dark brown":0.28,"Medium brown":0.18,"Light brown":0.10,"Dirty blond":0.04,"Blond":0.02 },
+  SAMed:                 { "Black-brown":0.30,"Dark brown":0.42,"Medium brown":0.20,"Light brown":0.06,"Auburn":0.02 },
+  "Mixed-Race":          { "Black-brown":0.25,"Dark brown":0.31,"Medium brown":0.22,"Light brown":0.12,"Dirty blond":0.06,"Blond":0.03,"Auburn":0.01 }
+};
+
+// Chance to use dyed colours (higher in Asia/SE Asia)
+const DYED_RATE_BY_REGION = {
+  Asian: 0.28, Seasian: 0.32, "South American": 0.10,
+  "Central European": 0.08, Scandinavian: 0.12, Caucasian: 0.09,
+  MENA: 0.05, MESA: 0.06, SpanMed: 0.06, ItalMed: 0.04, YugoGreek: 0.05,
+  EECA: 0.07, SAMed: 0.06, African: 0.05, "Mixed-Race": 0.12
+};
+
+// Dyed palette (weighted)
+const DYED_WEIGHTS = {
+  "Bleach blond": 0.18,
+  "Ash grey": 0.18,
+  "Silver/white-grey": 0.12,
+  "Blue-black": 0.10,
+  "Dark blue": 0.08,
+  "Teal": 0.06,
+  "Purple": 0.06,
+  "Red dye": 0.07,
+  "Pink": 0.05,
+  "Brown with subtle highlights": 0.10
+};
+
+function hairFor(regionKey, hairstyle, rfn = Math.random){
+  // Bald/razor/zero-guard → no hair colour
+  if (BALDISH.test(hairstyle)) return "No Hair";
+
+  // Decide dyed vs natural
+  const dyeRate = DYED_RATE_BY_REGION[regionKey] ?? 0.08;
+  if (rfn() < dyeRate) {
+    return pickWeighted(DYED_WEIGHTS, rfn);
+  }
+
+  // Natural for region
+  const dist = HAIR_NATURAL_BY_REGION[regionKey] || HAIR_NATURAL_BY_REGION["Caucasian"];
+  return pickWeighted(dist, rfn);
+}
+
+
 // === Smart eye colour by region ===
 const STRICT_BROWN_FOR = new Set(["African", "Asian", "Seasian", "MESA"]);
 
@@ -700,7 +760,7 @@ function generatePrompt(regionKey){
   const nationality = countryCodes[code] || "Nationality";
   const age = pick([17,18,19,20,21], r);
   const hairstyle = pick(generalHairstyles, r);
-  const hairColor = (hairstyle === "Shaved Bald") ? "No Hair" : pick(hairColors, r);
+  const hairColor = hairFor(regionKey, hairstyle, r);
   const eyes = eyeFor(regionKey, r);
   const beard = pick(facialHairs, r);
   const expr = pick(expressions, r);
