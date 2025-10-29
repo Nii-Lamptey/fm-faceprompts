@@ -1,0 +1,1278 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>FM Face Prompt Generator - NG Regens Regiona</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Generate copy-paste prompts for AI face renders tailored for Football Manager regens." />
+  <style>
+    :root { --w: 860px; }
+    body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji'; 
+           max-width: var(--w); margin: 24px auto; padding: 0 16px; line-height: 1.45; }
+    header { margin-bottom: 16px; }
+    h1 { font-size: 28px; margin: 0 0 8px; }
+    .muted { color: #6b7280; font-size: 14px; }
+    .grid { display: grid; gap: 10px; }
+    label { font-weight: 600; }
+    select, button, textarea, input { font-size: 16px; }
+    select, textarea, input[type="number"] { width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 8px; }
+    textarea { height: 240px; }
+    .row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; }
+    button { padding: 10px 14px; border-radius: 10px; border: 1px solid #d1d5db; cursor: pointer; background: #fff; }
+    button:hover { background: #f9fafb; }
+    footer { margin-top: 24px; font-size: 12px; color: #6b7280; }
+    .badge { display:inline-block; padding:2px 8px; border-radius:999px; background:#ecfeff; color:#0e7490; font-size:12px; margin-left:6px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>FM Face Prompt Generator - NG Regens Manager<span class="badge">No‑Python (JS)</span></h1>
+    <p class="muted">Pick a region, click Generate, then copy & paste into your AI image tool (ComfyUI, SDXL, Midjourney, Perchance AI (FLUX) etc.).</p>
+  </header>
+
+  <div class="grid">
+    <div>
+      <label for="region">Region</label>
+      <select id="region"></select>
+<label for="gender" style="margin-left:10px">Gender</label>
+<select id="gender"><option value="male" selected>Male</option><option value="female">Female</option></select>
+    </div>
+
+    <div class="row">
+      <button id="generate">Generate</button>
+      <button id="copy">Copy</button>
+      <button id="newseed" title="Change the random seed">New Seed</button>
+    </div>
+
+    <div>
+      <label for="output">Output</label>
+      <textarea id="output" placeholder="Your prompt will appear here…"></textarea>
+    </div>
+  </div>
+
+  <footer>
+    <footer style="margin-top:40px; border-top:1px solid #e5e7eb; padding:12px 0 20px 0; font-family:monospace; font-size:13px;">
+  <div>Tip: Click “New Seed” for a fresh variation, then “Generate”.</div>
+  <strong>Regions : Countries</strong>
+  <div id="regionMap" style="white-space:pre-wrap; margin-top:6px;"></div>
+</footer>
+
+<script>
+(function(){
+  function renderFooter(){
+    var mapEl = document.getElementById('regionMap');
+    if(!mapEl) return;
+    var r = (window.regions || {});
+    var out = [];
+    var names = Object.keys(r).sort();
+    for (var i=0;i<names.length;i++){
+      var name = names[i];
+      var codes = r[name] || [];
+      if(!codes.length) continue;
+      out.push(name + " : " + codes.join(", "));
+    }
+    mapEl.textContent = out.join("\n");
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", renderFooter);
+  } else {
+    renderFooter();
+  }
+})();
+</script>
+
+
+
+  <script>
+// ---- Data converted from your Python script ----
+
+const countryCodes = {
+  "AFG": "Afghan",
+  "AXL": "Scandinavian",
+  "ALB": "Albanian",
+  "ALG": "Algerian",
+  "ASA": "Caribbean",
+  "AND": "Andorran",
+  "ANG": "Angolan",
+  "AIA": "Anguillan",
+  "ATG": "Antiguan and Barbudan",
+  "ARG": "Argentine",
+  "ARM": "Armenian",
+  "ARU": "Aruban",
+  "AUS": "Australian",
+  "AUT": "Austrian",
+  "AZE": "Azerbaijani",
+  "BAS": "Basque",
+  "BAH": "Bahamian",
+  "BHR": "Bahraini",
+  "BAN": "Bangladeshi",
+  "BRB": "Barbadian",
+  "BLR": "Belarusian",
+  "BEL": "Belgian",
+  "BLZ": "Belizean",
+  "BEN": "Beninese",
+  "BER": "Bermudian",
+  "BHU": "Bhutanese",
+  "BOL": "Bolivian",
+  "BIH": "Bosnian",
+  "BOT": "Botswanan",
+  "BRA": "Brazilian",
+  "VGB": "British Virgin Islander",
+  "BRU": "Bruneian",
+  "BUL": "Bulgarian",
+  "BFA": "Burkinabe",
+  "BDI": "Burundian",
+  "CAM": "Cambodian",
+  "CMR": "Cameroonian",
+  "CAN": "Canadian Caucasian",
+  "CPV": "Cape Verdean",
+  "CAY": "Caymanian",
+  "CTA": "Central African",
+  "CHA": "Chadian",
+  "CHL": "Chilean",
+  "CHN": "Chinese",
+  "COL": "Colombian",
+  "COM": "Comorian",
+  "COD": "Congolese (DRC)",
+  "CGO": "Congolese (Republic)",
+  "COK": "Cook Islander",
+  "CRC": "Costa Rican",
+  "CIV": "Ivorian",
+  "CRO": "Croatian",
+  "CUB": "Cuban",
+  "CUW": "Curaçaoan",
+  "CYP": "Cypriot",
+  "CZE": "Czech",
+  "DEN": "Danish",
+  "DJI": "Djiboutian",
+  "DMA": "Dominican",
+  "DOM": "Dominican (Rep.)",
+  "ECU": "Ecuadorian",
+  "EGY": "Egyptian",
+  "SLV": "Salvadoran",
+  "ENG": "English Caucasian",
+  "EQG": "Equatorial Guinean",
+  "ERI": "Eritrean",
+  "EST": "Estonian",
+  "SWZ": "Swazi",
+  "ETH": "Ethiopian",
+  "FRO": "Faroese",
+  "FIJ": "Fijian",
+  "FIN": "Finnish",
+  "FRA": "French",
+  "TAH": "Tahitian",
+  "GAB": "Gabonese",
+  "GAM": "Gambian",
+  "GEO": "Georgian",
+  "GER": "German",
+  "GHA": "Ghanaian",
+  "GIB": "Gibraltar Caucasian",
+  "GRE": "Greek",
+  "GRL": "Greenlandic",
+  "GRN": "Grenadian",
+  "GLP": "Guadeloupe",
+  "GUM": "Guamanian",
+  "GUA": "Guatemalan",
+  "GUI": "Guinean",
+  "GNB": "Bissau-Guinean",
+  "GUY": "Guyanese",
+  "HAI": "Haitian",
+  "HON": "Honduran",
+  "HKG": "Hong Kong",
+  "HUN": "Hungarian",
+  "ISL": "Icelandic",
+  "IND": "Indian",
+  "IDN": "Indonesian",
+  "IRN": "Iranian",
+  "IRQ": "Iraqi",
+  "IRL": "Irish Caucasian",
+  "ISR": "Israeli",
+  "ITA": "Italian",
+  "JAM": "Jamaican",
+  "JPN": "Japanese",
+  "JOR": "Jordanian",
+  "KAZ": "Kazakh",
+  "KEN": "Kenyan",
+  "KHM": "Cambodian",
+  "KIR": "I-Kiribati",
+  "PRK": "North Korean",
+  "KOR": "South Korean",
+  "KOS": "Kosovar",
+  "KUW": "Kuwaiti",
+  "KGZ": "Kyrgyz",
+  "LAO": "Laotian",
+  "LVA": "Latvian",
+  "LBN": "Lebanese",
+  "LES": "Lesothoan",
+  "LBR": "Liberian",
+  "LBY": "Libyan",
+  "LIE": "Liechtensteiner",
+  "LTU": "Lithuanian",
+  "LUX": "Luxembourger",
+  "MAC": "Macanese",
+  "MAD": "Malagasy",
+  "MWI": "Malawian",
+  "MAS": "Malaysian",
+  "MDV": "Maldivian",
+  "MLI": "Malian",
+  "MLT": "Maltese",
+  "MTQ": "Martinican",
+  "MTN": "Mauritanian",
+  "MUS": "Mauritian",
+  "MEX": "Mexican",
+  "FSM": "Micronesian",
+  "MDA": "Moldovan",
+  "MON": "Monégasque",
+  "MNG": "Mongolian",
+  "MNE": "Montenegrin",
+  "MSR": "Montserratian",
+  "MAR": "Moroccan",
+  "MOZ": "Mozambican",
+  "MX1": "Mixed Jamaican-British",
+  "MX2": "Mixed Nigerian-British",
+  "MX3": "Mixed Ghanaian-British",
+  "MX4": "Mixed South African-British",
+  "MX5": "Mixed Somali-British",
+  "MX6": "Mixed Ethiopian-British",
+  "MX7": "Mixed Kenyan-British",
+  "MX8": "Mixed Jamaican-British",
+  "MX9": "Mixed Zimbabwean-British",
+  "MX10": "Mixed Barbadian-British",
+  "MX11": "Mixed Trinidadian-British",
+  "MX12": "Mixed Saint Lucian-British",
+  "MX13": "Mixed Jamaican-American",
+  "MX14": "Mixed Nigerian-American",
+  "MX15": "Mixed Ghanaian-American",
+  "MX16": "Mixed Ethiopian-American",
+  "MX17": "Mixed Somali-American",
+  "MX18": "Mixed South African-American",
+  "MX19": "Mixed Kenyan-American",
+  "MX20": "Mixed Kenyan-American",
+  "MX21": "Mixed Liberian-American",
+  "MX22": "Mixed Haitian-American",
+  "MX23": "Mixed Zimbabwean-American",
+  "MX24": "Mixed Rwandan-American",
+  "MX25": "Mixed Congolese-American",
+  "MX26": "Mixed Senegalese-French",
+  "MX27": "Mixed Ivorian-French",
+  "MX28": "Mixed Malian-French",
+  "MX29": "Mixed Congolese-French",
+  "MX30": "Mixed Haitian-French",
+  "MYA": "Burmese",
+  "NAM": "Namibian",
+  "NEP": "Nepalese",
+  "NED": "Dutch",
+  "NCL": "New Caledonian",
+  "NZL": "New Zealander",
+  "NCA": "Nicaraguan",
+  "NIG": "Nigerien",
+  "NGA": "Nigerian",
+  "NIU": "Niuean",
+  "NIR": "Caucasian Northern Irish",
+  "NMI": "Northern Mariana Islander",
+  "MKD": "Macedonian",
+  "NOR": "Norwegian",
+  "OMA": "Omani",
+  "PAK": "Pakistani",
+  "PLW": "Palauan",
+  "PLE": "Palestinian",
+  "PAN": "Panamanian",
+  "PNG": "Papua New Guinean",
+  "PAR": "Paraguayan",
+  "PER": "Peruvian",
+  "PHI": "Filipino",
+  "POL": "Polish",
+  "POR": "Portuguese",
+  "PUR": "Puerto Rican",
+  "QAT": "Qatari",
+  "REU": "Réunionese",
+  "ROU": "Romanian",
+  "RUS": "Russian",
+  "RWA": "Rwandan",
+  "SKN": "Kittitian",
+  "LCA": "Saint Lucian",
+  "SMN": "Samoan",
+  "VIN": "Vincentian",
+  "STP": "São Toméan",
+  "KSA": "Saudi",
+  "SCO": "Scottish Caucasian",
+  "SEN": "Senegalese",
+  "SMR": "Sammarinese",
+  "SRB": "Serbian",
+  "SEY": "Seychellois",
+  "SLE": "Sierra Leonean",
+  "SIN": "Singaporean",
+  "SIC": "Sicilian",
+  "SMA": "Sint Maarten",
+  "SVK": "Slovak",
+  "SVN": "Slovenian",
+  "SOL": "Solomon Islander",
+  "SOM": "Somali",
+  "RSA": "South African",
+  "SSD": "South Sudanese",
+  "ESP": "Spanish",
+  "SRI": "Sri Lankan",
+  "SDN": "Sudanese",
+  "SUR": "Surinamese",
+  "SWE": "Swedish",
+  "SUI": "Swiss",
+  "SYR": "Syrian",
+  "TPE": "Taiwanese",
+  "TJK": "Tajik",
+  "TAN": "Tanzanian",
+  "THA": "Thai",
+  "TLS": "Timorese",
+  "TOG": "Togolese",
+  "TGA": "Tongan",
+  "TRI": "Trinidadian",
+  "TUN": "Tunisian",
+  "TUR": "Turkish",
+  "TKM": "Turkmen",
+  "TCA": "Turks and Caicos Islander",
+  "TUV": "Tuvaluan",
+  "UGA": "Ugandan",
+  "UKR": "Ukrainian",
+  "UAE": "Emirati",
+  "GBR": "British",
+  "USA": "American Caucasian",
+  "VIR": "U.S. Virgin Islander",
+  "URU": "Uruguayan",
+  "UZB": "Uzbek",
+  "VAN": "Ni-Vanuatu",
+  "VAT": "Vatican",
+  "VEN": "Venezuelan",
+  "VIE": "Vietnamese",
+  "WAL": "Welsh Caucasian",
+  "YEM": "Yemeni",
+  "ZAM": "Zambian",
+  "ZIM": "Zimbabwean",
+  "LIB": "Lebanese",
+  "GUF": "French Guianese",
+  "WFI": "Wallis and Futuna Islander",
+  "SUD": "Sudanese",
+  "MAY": "Mahoran",
+  "BOE": "Bonairian",
+  "BLM": "Saint Barthélemy Islander",
+  "SPM": "Saint Pierre and Miquelon Islander"
+};
+const regions = {
+  "Afrocaribbean": [
+    "AIA",
+    "ARU",
+    "ATG",
+    "BAH",
+    "BER",
+    "BOE",
+    "BRB",
+    "CAY",
+    "CUW",
+    "DMA",
+    "GLP",
+    "GRN",
+    "GUF",
+    "GUY",
+    "HAI",
+    "JAM",
+    "LCA",
+    "MSR",
+    "MTQ",
+    "SKN",
+    "SMN",
+    "SUR",
+    "TCA",
+    "TRI",
+    "VGB",
+    "VIN",
+    "VIR"
+  ],
+  "AlbanianGreek": [
+    "ALB",
+    "CYP",
+    "GRE",
+    "KOS"
+  ],
+  "Anglosphere": [
+    "AUS",
+    "BLM",
+    "CAN",
+    "ENG",
+    "GBR",
+    "GRL",
+    "NZL",
+    "SCO",
+    "SPM",
+    "USA",
+    "WAL"
+  ],
+  "ArabGulf": [
+    "BHR",
+    "KSA",
+    "KUW",
+    "OMA",
+    "QAT",
+    "UAE",
+    "YEM"
+  ],
+  "Armenian": [
+    "ARM"
+  ],
+  "Baltics": [
+    "LTU",
+    "LVA"
+  ],
+  "Caucasus": [
+    "GEO"
+  ],
+  "CentralAfrica": [
+    "ANG",
+    "CGO",
+    "CMR",
+    "COD",
+    "CTA",
+    "EQG",
+    "GAB"
+  ],
+  "CentralAsian": [
+    "KAZ",
+    "KGZ"
+  ],
+  "CentralEurope": [
+    "AUT",
+    "BEL",
+    "GER",
+    "LIE",
+    "LUX",
+    "SUI"
+  ],
+  "China": [
+    "BHU",
+    "CHN",
+    "HKG",
+    "MAC",
+    "TPE"
+  ],
+  "EastAfrica": [
+    "BDI",
+    "COM",
+    "KEN",
+    "MAD",
+    "MAY",
+    "MRI",
+    "MWI",
+    "REU",
+    "RWA",
+    "SEY",
+    "SSD",
+    "TAN",
+    "UGA",
+    "ZAN"
+  ],
+  "EastBalkan": [
+    "BUL",
+    "MDA",
+    "MKD",
+    "ROU"
+  ],
+  "EastSlavic": [
+    "BLR",
+    "CRM",
+    "RUS",
+    "UKR"
+  ],
+  "Filipino": [
+    "PHI"
+  ],
+  "Finstonia": [
+    "EST",
+    "FIN"
+  ],
+  "France": [
+    "FRA",
+    "MON"
+  ],
+  "HornOfAfrica": [
+    "DJI",
+    "ERI",
+    "ETH",
+    "SOM"
+  ],
+  "Hungary": [
+    "HUN"
+  ],
+  "Iceland": [
+    "ISL"
+  ],
+  "Indonesia": [
+    "IDN"
+  ],
+  "Iran": [
+    "AFG",
+    "IRN",
+    "TJK"
+  ],
+  "Ireland": [
+    "IRL",
+    "NIR"
+  ],
+  "Italia": [
+    "ITA",
+    "MLT",
+    "SMR",
+    "VAT"
+  ],
+  "Japan": [
+    "JPN"
+  ],
+  "Korea": [
+    "KOR",
+    "PRK"
+  ],
+  "Maghreb": [
+    "ALG",
+    "EGY",
+    "LBY",
+    "MAR",
+    "TUN"
+  ],
+  "MainlandSEA": [
+    "CAM",
+    "LAO",
+    "MYA",
+    "THA"
+  ],
+  "Malaysia": [
+    "BRU",
+    "MAS"
+  ],
+  "Mashriq": [
+    "IRQ",
+    "ISR",
+    "JOR",
+    "LBN",
+    "LIB",
+    "PLE",
+    "SYR"
+  ],
+  "Mestizo": [
+    "ARG",
+    "BLZ",
+    "BOL",
+    "BRA",
+    "CHI",
+    "COL",
+    "CRC",
+    "CUB",
+    "DOM",
+    "ECU",
+    "GUA",
+    "HON",
+    "MEX",
+    "NCA",
+    "PAN",
+    "PAR",
+    "PER",
+    "PUR",
+    "SLV",
+    "URU",
+    "VEN"
+  ],
+  "Mongolia": [
+    "MNG"
+  ],
+  "Netherlands": [
+    "NED"
+  ],
+  "PacificIslanders": [
+    "ASA",
+    "COK",
+    "FIJ",
+    "FSM",
+    "GUM",
+    "KIR",
+    "NCL",
+    "NIU",
+    "NMI",
+    "PLW",
+    "PNG",
+    "SAM",
+    "SMA",
+    "SOL",
+    "TAH",
+    "TGA",
+    "TLS",
+    "TUV",
+    "VAN",
+    "WFI"
+  ],
+  "Poland": [
+    "POL"
+  ],
+  "Portugal": [
+    "POR"
+  ],
+  "SahelianAfrica": [
+    "CHA",
+    "MLI",
+    "MTN",
+    "NIG",
+    "SDN",
+    "SUD"
+  ],
+  "Scandinavian": [
+    "AXL",
+    "DEN",
+    "FRO",
+    "NOR",
+    "SWE"
+  ],
+  "Singapore": [
+    "SGP",
+    "SIN"
+  ],
+  "SouthAsia": [
+    "BAN",
+    "IND",
+    "MDV",
+    "NEP",
+    "PAK",
+    "SRI"
+  ],
+  "SouthernAfrica": [
+    "BOT",
+    "ESW",
+    "LES",
+    "MOZ",
+    "NAM",
+    "RSA",
+    "SWZ",
+    "ZAM",
+    "ZIM"
+  ],
+  "Spain": [
+    "AND",
+    "BAS",
+    "ESP",
+    "GIB"
+  ],
+  "Turkish": [
+    "AZE",
+    "TUR"
+  ],
+  "Uzbekistan": [
+    "TKM",
+    "UZB"
+  ],
+  "Vietnam": [
+    "VIE"
+  ],
+  "WestAfrica": [
+    "BEN",
+    "BFA",
+    "CIV",
+    "CPV",
+    "GAM",
+    "GHA",
+    "GNB",
+    "GUI",
+    "LBR",
+    "NGA",
+    "SEN",
+    "SLE",
+    "STP",
+    "TOG"
+  ],
+  "WestBalkan": [
+    "BIH",
+    "CRO",
+    "MNE",
+    "SRB",
+    "SVN"
+  ],
+  "WestSlavic": [
+    "CZE",
+    "SVK"
+  ]
+
+};
+
+
+// Trait lists (adjust to mirror your desktop logic as needed)
+const generalHairstyles = [
+  // Classic short
+  "Buzz cut","Crew cut","High and tight","Short back and sides","Ivy League",
+  "Side part (short)","French crop","Caesar cut","Short quiff","Short pompadour","Brush up","Slick back (short)",
+  // Fades
+  "Low fade (short top)","Mid fade (short top)","High fade (short top)",
+  "Taper fade (short top)","Skin fade (short top)",
+  // Textured / wavy (still neat)
+  "Textured crop","Messy crop (neat)","Short fringe (neat)","Wavy crop (short)",
+  // Curly / coily (kept neat for headshots)
+  "Short curls (neat)","Curly fade (short)","Short afro (tapered)","Tapered afro (neat)",
+  "Short twists (neat)","Short locs (neat)","Cornrows (neat)","Short box braids (neat)",
+   "Curtain haircut (medium)","Bro flow (pushed back)","Flow hairstyle (ear-length)",
+  "Medium length layers (side-swept)","Medium waves tucked behind ears",
+  "Shoulder-length waves (tucked)","Loose curls medium (controlled)","Mullet",
+  "Medium afro (rounded, neat)","Coily medium length (shaped, tapered)",
+  "Twists shoulder-length (neat)","Box braids shoulder-length (neat)",
+  "Cornrows to a low bun","Locs shoulder-length (neat)",
+  "Low ponytail (tidy)","Man bun (low, tidy)","Top knot (tidy)","Half-up tie (tidy)",
+   // --- Spiky / faux-hawk / mohawk family ---
+  "Short spiky","Textured spikes (short)","Messy spikes (neat)","Forward spiked fringe (short)","Spiky quiff",
+  "Spiky crop","Spiky comb-over (short)","Mini faux hawk","Soft faux hawk (subtle)",
+  "Faux hawk (taper fade)","Modern mohawk (taper fade)","Classic mohawk (short, neat crest)",
+  "Burst fade mohawk","Temple fade mohawk","Curly mohawk","Afro mohawk (frohawk)",
+  "Braided mohawk","Locs mohawk","Cornrow mohawk","Mullet-hawk (mohawk mullet)",
+  //LONG
+  "Curtain haircut (long)","Center-part long layers","Bro flow (long)","Surfer hair (shoulder-length)",
+  "Medium-long waves over ears","Shoulder-length waves (messy)","Loose curls to shoulders",
+  "Corkscrew curls (long, wild)","Big rounded afro (long)","Twist-out (long)",
+  "Two-strand twists (shoulder-length)","Rope twists (long)",
+  "Locs (shoulder-length)","Locs (mid-back)","Freeform locs (long)", "long curly shaggy",
+  "Box braids (long)","Knotless braids (long)","Cornrows with zig-zag parts",
+  "Straight-back cornrows to low bun","Fulani braids (subtle beading)",
+  "Shag (’70s long shag)","Layered long shag with fringe","Wolf cut (long)",
+  "Modern mullet (long)","Hockey hair (mullet)","Wet look slick-back (long)",
+  "Face-framing long layers","Long side part with waves","Beachy long waves",
+  "Half-up half-down (long)","Half-up top knot (long)","Top knot (messy)",
+  "High man bun (messy)","Low loose ponytail","Side-swept long fringe", 
+  "Collarbone-length straight (center part)", "Collarbone-length straight (side part)",
+"Shoulder-length straight (blunt ends)", "Shoulder-length straight (tucked behind ears)",
+"Long straight layers (sleek, center part)", "Long straight layers (side-swept)",
+"V-cut long layers (sleek)", "U-shaped hem long layers", "Feathered long layers (soft flip)",
+"Razor-cut long layers (textured ends)", "Long brushed-back (dry finish)", "Long pushed-back (natural volume)",
+"Wind-swept long flow (ear-tuck)", "Air-dried long waves (natural)", "Long wavy blowout",
+"Subtle S-wave perm (long, natural)", "Heavy curtain fringe (long, layered)", "Long side part (straight, ear-tuck)",
+"Grown-out flow (past shoulders)", "Long undercut (length on top, slicked back)", "Disconnected undercut (long top, sides short)",
+"Temple-taper with long top (tucked behind ears)", "Drop fade",  "Burst fade",  "Temple fade",  "Shadow fade",  "Skin fade with hard part",
+  "Messy textured crop",  "Longer fringe messy top",  "Wind-swept texture (medium)",  "Shaggy layered fringe",  "Textured crop with hard part",
+  "French crop with shaved slit",  "Bleached blond buzz cut",  "Bleached messy textured top",  "Peroxide platinum crop",  "Frosted tips fade",
+  "Half-and-half dye split",  "Neon dyed tips",  "Tiger stripe dyed buzz",  "Checkerboard dyed fade",  "Mushroom bowl cut (modern)",  "Modern bowl cut with fade",
+  "Layered shaggy wolf cut",  "Disconnected undercut",  "Temple-taper undercut",  "Hard part comb-over",  "Quiff with hard part",  "Curtain fringe with undercut",
+  "Liberty spikes",  "Textured faux hawk",  "Faux hawk with hard part",  "Mohawk fade with design",  "Curly mohawk mullet",  "Euro mullet",  "Modern curly mullet",
+  "Bleached mullet",  "Shaggy mullet",  "Medium flow with headband",  "Long flow with headband",  "Wet flow (game-day)",  "Triangle box braids",  "Two-tone box braids",
+  "Feed-in cornrows",  "Cornrows into low bun",  "Cornrows into man bun",  "Undercut with braids",  "Top knot with braided sides",  "Micro braids (neat)",  "Undercut man bun",
+  "Samurai bun",  "Half-up man bun",  "Loose top knot with flyaways",  "Shaved sides long top (soccer cut)",  "Asymmetric fringe",  "Side-swept curtain fringe",  "Mop top (modern)",
+  "French crop long fringe",  "Rat tail",
+ //Retro
+  "Beatles mop-top (’60s)",  "Mod mop-top (clean, ’60s)",  "College boy side part (’60s)",  "Slim pompadour (’60s)",  "Surfer mop (shaggy, ’60s)",
+  "Pageboy (short, ’60s/’70s)",  "Feathered shag (medium, ’70s)",  "Feathered wings blowout (’70s)",  "Center-part feathered layers (’70s)",
+  "Shag with flipped ends (’70s)",  "Shag mullet (’70s)",  "Pageboy (medium, ’70s)",  "Loose perm (’80s)",  "Soft perm blowout (’80s)",
+  "Curly blow-dry volume (’80s)",  "Wet-look slick back (’80s)",  "Flat top (boxy, non-afro, ’80s)",  "Side-part blow-dry (’80s)",
+  "Perm mullet (’80s)",  "Curtain haircut (floppy temple-length, ’90s)",  "Undercut with curtains (’90s)",  "Caesar (textured, ’90s)",
+  "Frosted-tips spikes (’90s)",  "Spiky crop with frosted tips (’90s)",  "Wet gel spikes (’90s)",  "Bleached buzz (’90s)",
+  "Zig-zag part (’90s)",  "Side-swept floppy fringe (’90s)",  "Middle-part chin-length (’90s)",  "Straight shoulder-length center part (grunge, ’90s)",
+  "Mini ponytail with center part (’90s)",    
+  // modern Euro/LatAm cuts  
+  "Edgar cut (takuache, textured fringe)",  "High taper with textured French crop",  "Mid taper with messy crop",  "Low taper with side-swept fringe",
+  "High skin fade with brushed-up quiff",  "High fade slick-back (dry, natural volume)",  "Blowout taper (puffed front)",  "Drop fade crop (textured)",
+  "Temple fade with cropped fringe",  "Wavy curtains (temple-length)",  "Two-block cut (K-style, soft volume)",  "Permed top with taper fade (K-style)",
+  "Long curtains with permed ends",  "Wet textured crop (matte sides)",  "Mullet taper (subtle, footballer style)",  "Mullet with defined fringe (Euro mullet 2.0)",
+  "Undercut with surgical line",  "Hard-part undercut slick-back",  "Disconnected mid fade with curls on top", "C-shape burst fade",  "Burst fade with curly top",  "High-top fade (short, neat box)",  "360 waves (short, neat)",  "Short sponge twists (controlled)",
+  
+  // braids & rows (neat headshot safe)
+  "Tight cornrows (straight back, low bun)",  "Cornrows with side parting (neat)",  "Box braids (short, tapered sides)",  "Dutch braids to low bun (neat)",
+  "Viking side braids (subtle)",
+  // throwback refreshers
+  "Shaggy Mod crop (’60s clean version)",  "Curtains with undercut (’90s crisp)",  "Frosted tips (subtle, short crop)",  "Soft perm blowout (modern ’80s nod)",
+  // ultra-short / clipper guards
+  "Induction cut (0 guard, uniform)",  "Burr cut (guard 1, even length)",  "Butch cut (guard 2, even length)",  "Brush cut (very short on top, tapered sides)",
+  "Buzz cut with sharp line-up",  "Buzz cut with temple fade",  "Buzz cut with drop fade",  "Buzz cut with shadow fade",  "Buzz cut with surgical line (subtle)",
+  "Tapered buzz (clean neckline)",  "High bald fade buzz (razor finish)",  "Mid bald fade buzz (razor finish)",  "Low bald fade buzz (razor finish)",
+  // classic military / regulation
+  "Regulation army cut (short, parted)",  "High and tight recon (shaved sides, short crown)",  "High and tight (extra tight sides, short top)",  "Jarhead cut (very short crown)",
+  "Crew cut high fade (tight)",  "Crew cut mid fade (tight)",  "Crew cut low taper (clean)",
+
+  // Caesar / crop (micro, sharp)
+  "Micro Caesar (blunt micro-fringe)",  "Caesar crop with skin fade",   "Caesar crop with mid taper",   "Textured micro crop (short top)",
+  "Blunt fringe crop (short, matte finish)",  "Short French crop with low fade",  "Short French crop with temple fade",
+
+  // flat tops & boxes (neat, headshot-safe)
+  "Mini flat top (short box, crisp edges)",   "Flat top with skin fade (short)",  "Flat top with mid fade (short)",
+  "Short box top with taper fade",
+
+  // short quiff / side part (tight)
+  "Short quiff with high fade (dry finish)",   "Short quiff with low taper",  "Short side part with skin fade",  "Short side part with mid taper",
+  "Short comb-over with low fade (neat)",
+
+  // edges & detailing (subtle)
+  "Temple fade with sharp edge-up",  "Low taper with razor neckline",  "High taper with razor part (subtle)",  "Drop fade with edge-up (short top)",
+
+  // very short textured options
+  "1.5 guard textured crop (matte)",  "Short messy crop (tight sides, tidy)",  "Short spiky crown (tight fade)",  "Forward brush crop (short top)",
+  // Bald
+  "Shaved Bald","Close shave","Clean-shaven scalp","Razor-shaved head","Clean bald",
+"Zero-guard buzz","Buzzed to skin","Grade 0 buzz","Very tight buzz (0)"];
+const hairColors = ["Jet black","Black-brown","Dark brown","Medium brown","Light brown", "black", "brown",
+  "Dirty blond","Blond","Platinum blond","Auburn","Ginger","Dyed white-grey","Strawberry blond","No Hair"];
+const eyeColors = ["blue","green","grey","brown"];
+const facialHairs = ["Clean-shaven", "5 o'clock shadow",  "Light stubble",  "Short stubble",
+  "Medium stubble",  "Heavy stubble",  "Designer stubble (neat)",  "Soul patch (neat)",  "Goatee (no moustache)",
+  "Goatee and moustache (neat)",  "Van Dyke (neat)",  "Circle beard (neat)",  "Anchor beard (neat)", "thick viking beard",
+  "Balbo beard (neat)",  "Short boxed beard (neat)",  "Boxed beard (medium, neat)",  "Full beard (short, trimmed)",
+  "Full beard (medium, trimmed)",  "Short chin strap (neat)",  "Chevron moustache (neat)",  "Short moustache (neat)",
+  "Pencil moustache (neat)",  "Handlebar moustache (subtle, neat)",  "Patchy beard (neatly trimmed)",  "Short beard faded into sideburns",
+  "Stubble with defined neckline"];
+const expressions = ["Neutral","Relaxed Neutral","Stoic","Composed","Calm","Poised","Professional","Relaxed",
+  "Attentive","Focused","Game Face","Determined","Confident","Resolute","Proud","Serious","Beaming",
+  "Thoughtful","Contemplative","Pensive","Soft Smile","Subtle Smile","Closed-Mouth Smile","Very Happy",
+  "Friendly","Warm","Approachable","Slight Grin","Gentle Smile","Faint Smile","Assured","Even-Keeled"];
+const uniqueFeatures = ["Light freckles",  "Heavy freckles",  "Cheek scar (healed)",  "Eyebrow scar (healed)",  "Forehead scar (faint)",
+  "Jawline scar (faint)",  "Beauty mark on cheek",  "Beauty mark near lip",  "Beauty mark on jaw",  "Under-eye mole",  "Single dimple (one cheek)",
+  "Dimples (both cheeks)",  "Cleft chin (subtle)",  "Healed broken nose (subtle)",  "Slight nose bump (subtle)",  "Iris flecks",  "Central heterochromia (ring)",
+  "Heterochromia (two different eye colors)",  "Hooded eyelids (subtle)",  "Monolid eyes",  "Light acne texturing (subtle)",  "Faint acne scarring (subtle)",
+  "Light rosacea on cheeks (subtle)",  "Sun spot on cheekbone (subtle)",  "Small birthmark on cheek (light)",  "Small birthmark near temple (light)",
+  "Vitiligo patch (subtle)",  "Port-wine stain (light, small)",  "Eyebrow slit",  "Healed eyebrow slit",  "Attached earlobes (subtle)",  "Slightly prominent ears (subtle)",
+  "Single lobe ear piercing (left)",  "Single lobe ear piercing (right)",  "Double lobe ear piercings",  "Helix ear piercing (small ring)",  "Tragus ear piercing (small stud)",
+  "Small face tattoo (temple, minimal)",  "Neck tattoo (partially visible)",  "straight, narrow nose with soft tip",
+  "medium nose with rounded tip",   "broad nose bridge with soft contour",  "subtle nasal bridge dip",  "almond eyes (subtle upturn)",  "round eyes (soft lower lid)",
+  "slightly prominent philtrum",  "soft fuller lower lip",  "defined cupid’s bow",  "slightly recessed chin (subtle)",  "mildly square chin",  "soft jaw with slight taper",
+  "high cheekbones, soft cheeks",  "mild malar fullness (athletic)",  "Healed lip cut (faint)"];
+const facialFeatures = [
+"round face with soft features",
+  "oval face with a strong jawline",
+  "angular face with pronounced cheekbones",
+  "square face with a broad forehead",
+  "heart-shaped face with a tapered chin",
+  "diamond-shaped face with high cheekbones",
+  "long face with a tall forehead",
+  "triangular face with a wider jawline",
+  "slight natural facial asymmetry",
+  "subtle under-eye bags",
+  "faint crow’s feet",
+  "light smile lines",
+  "light freckles across nose and cheeks",
+  "single beauty mark on the cheek",
+  "prominent brow ridge",
+  "soft brow ridge with low forehead",
+  "straight nose bridge",
+  "aquiline nose bridge",
+  "slightly crooked nose bridge",
+  "small button nose",
+  "broader nose with soft contour",
+  "narrow nose with defined tip",
+  "full lips (natural)",
+  "medium lips with defined cupid’s bow",
+  "thin lips (natural)",
+  "slightly downturned lips (subtle)",
+  "slightly upturned lips (subtle)",
+  "wide-set eyes",
+  "close-set eyes",
+  "deep-set eyes",
+  "hooded eyelids",
+  "monolid eyes",
+  "thick eyebrows (natural)",
+  "fine eyebrows (neat)",
+  "gently arched eyebrows",
+  "straight eyebrows",
+  "rounded jawline",
+  "square jawline",
+  "slight cleft in the chin",
+  "subtle dimples when smiling",
+  "very light acne texturing (subtle)",
+  "natural cheek rosiness",
+  "faint scar above the eyebrow",
+  "small ears (close to head)",
+  "slightly prominent ears (subtle)"
+];
+
+let currentSeed = Math.floor(Math.random() * 10000000);
+function rng(seed){ return function(){ seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; }; }
+function pick(arr, r){ return arr[Math.floor(r() * arr.length)]; }
+
+// === Hair colour logic (natural + dyed by region) ===
+const BALDISH = /(shaved|clean[- ]?shaven|razor[- ]?shaved|zero-guard|buzzed to skin|grade 0|very tight buzz)/i;
+
+// Natural colour distributions by region
+const HAIR_NATURAL_BY_REGION = {
+  African: { "Jet black":0.55,"Black-brown":0.35,"Dark brown":0.09,"Medium brown":0.01 },
+  Asian:   { "Jet black":0.62,"Black-brown":0.25,"Dark brown":0.11,"Medium brown":0.02 },
+  Seasian: { "Jet black":0.60,"Black-brown":0.27,"Dark brown":0.10,"Medium brown":0.03 },
+  MESA:    { "Jet black":0.40,"Black-brown":0.32,"Dark brown":0.20,"Medium brown":0.06,"Light brown":0.02 },
+  MENA:    { "Jet black":0.38,"Black-brown":0.32,"Dark brown":0.20,"Medium brown":0.07,"Light brown":0.02,"Auburn":0.01 },
+  "South American":      { "Black-brown":0.30,"Dark brown":0.40,"Dirty blond":0.08, "Medium brown":0.20,"Light brown":0.08,"Auburn":0.02 },
+  "Central European":    { "Black-brown":0.18,"Dark brown":0.28,"Medium brown":0.24,"Light brown":0.14,"Dirty blond":0.08,"Blond":0.06,"Auburn":0.02 },
+  Scandinavian:          { "Dark brown":0.18,"Medium brown":0.22,"Light brown":0.20,"Dirty blond":0.20,"Blond":0.17,"Platinum blond":0.02,"Auburn":0.01 },
+  Caucasian:             { "Black-brown":0.18,"Dark brown":0.28,"Medium brown":0.24,"Light brown":0.12,"Dirty blond":0.08,"Blond":0.06,"Auburn":0.03,"Ginger":0.03 },
+  SpanMed:               { "Black-brown":0.30,"Dark brown":0.42,"Medium brown":0.20,"Light brown":0.06,"Auburn":0.02 },
+  ItalMed:               { "Black-brown":0.36,"Dark brown":0.40,"Medium brown":0.18,"Light brown":0.05,"Auburn":0.01 },
+  YugoGreek:             { "Black-brown":0.28,"Dark brown":0.38,"Medium brown":0.22,"Light brown":0.10,"Auburn":0.02 },
+  EECA:                  { "Jet black":0.10,"Black-brown":0.28,"Dark brown":0.28,"Medium brown":0.18,"Light brown":0.10,"Dirty blond":0.04,"Blond":0.02 },
+  SAMed:                 { "Black-brown":0.30,"Dark brown":0.42,"Medium brown":0.20,"Light brown":0.06,"Auburn":0.02, "Dirty blond":0.08 },
+  "Mixed-Race":          { "Black-brown":0.25,"Dark brown":0.31,"Medium brown":0.22,"Light brown":0.12,"Dirty blond":0.06,"Blond":0.03,"Auburn":0.01 }
+};
+
+// Chance to use dyed colours (higher in Asia/SE Asia)
+const DYED_RATE_BY_REGION = {
+  Asian: 0.28, Seasian: 0.32, "South American": 0.16,
+  "Central European": 0.11, Scandinavian: 0.12, Caucasian: 0.18,
+  MENA: 0.04, MESA: 0.04, SpanMed: 0.09, ItalMed: 0.09, YugoGreek: 0.09,
+  EECA: 0.07, SAMed: 0.17, African: 0.18, "Mixed-Race": 0.18
+};
+
+// Dyed palette (weighted)
+const DYED_WEIGHTS = {
+  "Bleach blond": 0.20,
+  "Ash grey": 0.18,
+  "Silver/white-grey": 0.14,
+  "Blue-black": 0.10,
+  "Dark blue": 0.08,
+  "baby blue": 0.08,
+  "gold": 0.06,
+  "Bright Orange": 0.06,
+  "pink and sky blue": 0.03,
+  "neon pink and neon orange": 0.07,
+  "pink and gold": 0.07,
+  "dyed red, white and blue": 0.07,
+  "Rainbow": 0.07,
+  "orange and royal blue": 0.07,
+  "Neon Orange": 0.07,
+  "Neon Yellow": 0.07,
+  "Red and White": 0.07,
+  "Blue and White": 0.03,
+  "orange and neon green": 0.03,
+  "red and yellow": 0.07,
+  "Red and Blue": 0.08,
+  "Teal": 0.12,
+  "Purple": 0.12,
+  "Lilac": 0.12,
+  "Red dye": 0.12,
+  "bright green": 0.14,
+  "Bright Red": 0.14,
+  "Pink": 0.09,
+  "Brown with subtle white highlights": 0.16,
+//COMBOS
+  "Black + Electric blue": 0.016,
+  "Black + Teal": 0.016,
+  "Blue-black + Indigo": 0.014,
+  "Ash grey + Teal": 0.012,
+  "Silver/white-grey + Purple": 0.012,
+  "Silver/white-grey + Teal": 0.012,
+  "Midnight blue + Indigo": 0.012,
+  "Black + Bright red": 0.012,
+  "Black + Bright green": 0.010,
+  "Dark blue + Bright red": 0.010,
+  "Burgundy + Copper": 0.012,
+  "Wine red + Rose gold": 0.010,
+  "Bleach blond + Pastel pink": 0.09,
+  "Bleach blond + Lavender": 0.09,
+  "Platinum white + Pastel blue": 0.062,
+  "Ash grey + Pastel purple": 0.010,
+  "Black + Platinum white": 0.036,
+  "Black + Silver": 0.024,
+  "Black + Ash grey": 0.022,
+  "Black + Purple": 0.022,
+  "Black + Hot pink": 0.010,
+  "Black + Neon green": 0.010,
+  "Black + Orange": 0.010,
+  "Black + Gold": 0.012,
+
+  "Dark blue + Teal": 0.012,
+  "Navy blue + Electric blue": 0.012,
+  "Indigo + Teal": 0.010,
+  "Blue + Silver": 0.012,
+  "Blue + Platinum white": 0.010,
+
+  "Teal + Purple": 0.012,
+  "Teal + Neon green": 0.010,
+  "Teal + Silver": 0.010,
+
+  "Purple + Pink": 0.012,
+  "Purple + Gold": 0.019,
+  "Purple + Silver": 0.010,
+  "Lilac + Silver": 0.010,
+  "Magenta + Purple": 0.010,
+
+  "Red + Black": 0.012,
+  "Red + Platinum white": 0.010,
+  "Red + Orange": 0.010,
+  "Red + Gold": 0.010,
+
+  "Copper + Blond": 0.012,
+  "Copper + Platinum white": 0.010,
+  "Auburn + Gold": 0.010,
+  "Rose gold + Platinum white": 0.010,
+
+  "Pastel pink + Pastel blue": 0.012,
+  "Pastel purple + Pastel blue": 0.010,
+  "Pastel peach + Pink": 0.010,
+
+  "Neon yellow + Electric blue": 0.010,
+  "Neon green + Purple": 0.010,
+  "Neon orange + Neon pink": 0.010,
+
+  "Gold + Black": 0.010,
+  "Gold + Blue": 0.010,
+  "Silver + Gold": 0.014,
+
+  // 3-color mixes
+  "Black + Platinum white + Electric blue": 0.020,
+  "Bleach blond + Pink + Purple": 0.018,
+  "Teal + Purple + Silver": 0.018,
+  "Red + White + Black": 0.018,
+  "Neon green + Neon yellow + Electric blue": 0.030,
+  "Pink + Blue + Purple": 0.010,
+  "Gold + Red + Black": 0.008,
+
+  // single vivid shades
+  "Rose gold": 0.06,
+  "Pastel mint": 0.06,
+  "Steel blue": 0.06,
+  "Charcoal grey": 0.06,
+  "Cobalt blue": 0.06,
+  "Neon purple": 0.06,
+  "Pastel peach": 0.06,
+  "Copper": 0.06,
+
+  // two-tone (split/ombre/highlights)
+  "Black + Cobalt blue": 0.016,
+  "Black + Rose gold": 0.012,
+  "Black + Copper": 0.012,
+  "Ash grey + Pastel pink": 0.012,
+  "Ash grey + Cobalt blue": 0.010,
+  "Silver/white-grey + Electric blue": 0.012,
+  "Silver/white-grey + Rose gold": 0.012,
+  "Platinum white + Neon purple": 0.012,
+  "Platinum white + Teal": 0.012,
+  "Dark brown + Caramel highlights": 0.030,
+  "Medium brown + Honey blond": 0.030,
+  "Blond + Pink tips": 0.020,
+  "Blond + Teal tips": 0.018,
+  "Teal + Magenta": 0.012,
+  "Teal + Pastel mint": 0.012,
+  "Purple + Teal": 0.012,
+  "Purple + Cobalt blue": 0.012,
+  "Red + Black underlayer": 0.014,
+  "Red + Copper": 0.012,
+  "Orange + Pink": 0.010,
+  "Gold + Burgundy": 0.010,
+  "Blue + Neon green": 0.010,
+  "Blue + Pastel purple": 0.010,
+
+  // three-color
+  "Black + Silver + Electric blue": 0.022,
+  "Platinum white + Pink + Purple": 0.018,
+  "Teal + Purple + Pink": 0.016,
+  "Copper + Gold + Brown": 0.014,
+  "Neon green + Blue + Purple": 0.016,
+  "Red + Orange + Yellow": 0.014
+};
+
+function hairFor(regionKey, hairstyle, rfn = Math.random){
+  // Bald/razor/zero-guard → no hair colour
+  if (BALDISH.test(hairstyle)) return "No Hair";
+
+  // Decide dyed vs natural
+  const dyeRate = DYED_RATE_BY_REGION[regionKey] ?? 0.08;
+  if (rfn() < dyeRate) {
+    return pickWeighted(DYED_WEIGHTS, rfn);
+  }
+
+  // Natural for region
+  const dist = HAIR_NATURAL_BY_REGION[regionKey] || HAIR_NATURAL_BY_REGION["Caucasian"];
+  return pickWeighted(dist, rfn);
+}
+
+
+// === Smart eye colour by region ===
+const STRICT_BROWN_FOR = new Set(["African", "Asian", "Seasian", "MESA"]);
+
+const EYE_BY_REGION = {
+  African:           { Brown: 1.00 },
+  Asian:             { Brown: 1.00 },
+  Seasian:           { Brown: 1.00 },
+  MESA:              { Brown: 1.00 },
+  MENA:              { Brown: 0.98, Grey: 0.02 },
+  "South American":  { Brown: 0.95, Green: 0.03, Blue: 0.02 },
+  "Central European":{ Brown: 0.50, Blue: 0.30, Green: 0.15, Grey: 0.05 },
+  Scandinavian:      { Blue: 0.50, Green: 0.20, Grey: 0.15, Brown: 0.15 },
+  Caucasian:         { Blue: 0.40, Brown: 0.35, Green: 0.20, Grey: 0.05 },
+  SpanMed:           { Brown: 0.90, Green: 0.07, Blue: 0.03 },
+  ItalMed:           { Brown: 0.92, Green: 0.05, Blue: 0.03 },
+  YugoGreek:         { Brown: 0.85, Green: 0.10, Blue: 0.05 },
+  EECA:              { Brown: 0.60, Blue: 0.25, Green: 0.10, Grey: 0.05 },
+  SAMed:             { Brown: 0.90, Green: 0.06, Blue: 0.04 },
+  "Mixed-Race":      { Brown: 0.60, Blue: 0.20, Green: 0.15, Grey: 0.05 }
+};
+
+function pickWeighted(weights, rfn = Math.random) {
+  let total = 0;
+  for (const v of Object.values(weights)) total += v;
+  let t = rfn() * total;
+  for (const [k, v] of Object.entries(weights)) {
+    t -= v;
+    if (t <= 0) return k;
+  }
+  return Object.keys(weights)[0];
+}
+
+function eyeFor(regionKey, rfn = Math.random) {
+  if (STRICT_BROWN_FOR.has(regionKey)) return "Brown";
+  const dist = EYE_BY_REGION[regionKey] || EYE_BY_REGION["Caucasian"];
+  return pickWeighted(dist, rfn);
+}
+
+function generatePrompt(regionKey){
+  if(!regions[regionKey] || regions[regionKey].length===0) return "Unknown region.";
+  const r = rng(currentSeed);
+  const code = pick(regions[regionKey], r);
+  const nationality = countryCodes[code] || "Nationality";
+  const age = pick([17,18,19,20,21], r);
+  const hairstyle = pick(generalHairstyles, r);
+  const hairColor = hairFor(regionKey, hairstyle, r);
+  const eyes = eyeFor(regionKey, r);
+  const beard = pick(facialHairs, r);
+  const expr = pick(expressions, r);
+  const feature = pick(uniqueFeatures, r);
+  const face = pick(facialFeatures, r);
+
+  return "A single " + nationality + " male soccer player, He is " + age + " years old with a youthful, athletic appearance, " +
+  "official club headshot, clean studio portrait, centered, straight-on, head and shoulders only, " +
+  "even soft clamshell lighting (frontal key + frontal fill), no harsh shadows, no patterned light, " +
+  "neutral white balance, uniform light grey or white seamless backdrop, " +
+  "85mm lens look, f/8, ISO 100, 1/125s, crisp focus on the eyes, " +
+  hairColor + " " + hairstyle + " hairstyle and " + beard + ", " +
+  "face is " + face + ", " + expr + " expression, " + feature + ", " + eyes + " eyes, " +
+  "high-quality professional studio photo.";
+}
+
+function populateRegions(){
+  const sel = document.getElementById("region");
+  sel.innerHTML = "";
+  const keys = Object.keys(regions);
+  for(const k of keys){
+    const opt = document.createElement("option");
+    opt.value = k; opt.textContent = k;
+    sel.appendChild(opt);
+  }
+  if(keys.length) sel.value = keys[0];
+}
+
+document.getElementById("generate").addEventListener("click", ()=>{
+  const region = document.getElementById("region").value;
+  document.getElementById("output").value = generatePrompt(region);
+});
+document.getElementById("copy").addEventListener("click", async ()=>{
+  const val = document.getElementById("output").value;
+  if(val) await navigator.clipboard.writeText(val);
+});
+document.getElementById("newseed").addEventListener("click", ()=>{
+  currentSeed = Math.floor(Math.random() * 10000000);
+  const region = document.getElementById("region").value;
+  if(region) document.getElementById("output").value = generatePrompt(region);
+});
+
+populateRegions();
+  </script>
+
+<script>
+(function(){
+  // Strong female transform with uppercase handling + trait scrubbing
+  function transformForFemaleStrong(text){
+    if (!text) return text;
+    let t = text;
+
+    // Uppercase forms first
+    t = t.replace(/\bA MALE\b/g, 'A FEMALE');
+    t = t.replace(/\bAN MALE\b/g, 'A FEMALE'); // rare, but safe
+    t = t.replace(/\bMALE\b/g, 'FEMALE');
+    t = t.replace(/\bHE IS\b/g, 'SHE IS');
+    t = t.replace(/\bHE\b/g, 'SHE');
+    t = t.replace(/\bHIS\b/g, 'HER');
+
+    // Title case / lower
+    t = t.replace(/\bmale\b/gi, 'female');
+    t = t.replace(/\bman\b/gi, 'woman');
+    t = t.replace(/\bboy\b/gi, 'woman');
+    t = t.replace(/\bHe is\b/g, 'She is')
+         .replace(/\bhe is\b/g, 'she is')
+         .replace(/\bHe\b/g, 'She')
+         .replace(/\bhe\b/g, 'she')
+         .replace(/\bHis\b/g, 'Her')
+         .replace(/\bhis\b/g, 'her');
+
+    // Remove facial hair mentions entirely (even if comma-separated)
+    t = t.replace(/\b(moustache|mustache|beard|stubble|goatee|sideburns)\b/gi, '');
+    // Clean double commas/spaces made by removal
+    t = t.replace(/,\s*,/g, ', ').replace(/\s{2,}/g,' ').replace(/\s+,/g, ',').replace(/,\s+$/, '');
+
+    // Optional tweak of hair descriptors
+    t = t.replace(/\bcrew cut\b/gi, 'ponytail')
+         .replace(/\bshort hair\b/gi, 'medium-length hair');
+
+    // player -> female footballer (keeps wording consistent)
+    t = t.replace(/\b(soccer|football)\s+player\b/gi, 'female footballer');
+
+    return t.trim();
+  }
+
+  function applyFemaleTransformIfNeeded(){
+    var genderSel = document.getElementById('gender');
+    if (!genderSel) return;
+    if (genderSel.value !== 'female') return;
+    var out = document.getElementById('output');
+    if (!out) return;
+    out.value = transformForFemaleStrong(out.value);
+  }
+
+  // Hook: after clicking Generate (and also after New Seed), run a short-timer transform
+  function hookButtons(){
+    var gen = document.getElementById('generate');
+    var seed = document.getElementById('newseed');
+    function wrap(btn){
+      if(!btn || btn.__wrapped) return;
+      btn.__wrapped = true;
+      btn.addEventListener('click', function(){
+        setTimeout(applyFemaleTransformIfNeeded, 0);
+      });
+    }
+    wrap(gen); wrap(seed);
+  }
+
+  // Hide/disable facial hair controls in UI when female is selected
+  function hideFacialHairUI(isFemale){
+    var labels = Array.from(document.querySelectorAll('label, .label, .trait, .option, span, p'));
+    labels.forEach(function(el){
+      var txt = (el.innerText || el.textContent || '').toLowerCase();
+      if (/(moustache|mustache|beard|stubble|goatee|sideburns)/i.test(txt)){
+        if (isFemale) el.style.display = 'none'; else el.style.display = '';
+        // also try to disable associated input
+        var input = el.querySelector('input, select');
+        if (input){ input.disabled = !!isFemale; if (isFemale && input.checked) input.checked = false; }
+      }
+    });
+    // Also hide <option> in selects
+    Array.from(document.querySelectorAll('option')).forEach(function(opt){
+      var txt = (opt.text || opt.innerText || opt.label || '').toLowerCase();
+      if (/(moustache|mustache|beard|stubble|goatee|sideburns)/i.test(txt)){
+        opt.disabled = !!isFemale;
+        if (isFemale) opt.hidden = true; else opt.hidden = false;
+      }
+    });
+  }
+
+  function onGenderChange(){
+    var sel = document.getElementById('gender');
+    if (!sel) return;
+    hideFacialHairUI(sel.value === 'female');
+    // Also re-run transform on existing text
+    applyFemaleTransformIfNeeded();
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', function(){
+      hookButtons();
+      onGenderChange();
+      var sel = document.getElementById('gender');
+      if (sel) sel.addEventListener('change', onGenderChange);
+    });
+  } else {
+    hookButtons();
+    onGenderChange();
+    var sel = document.getElementById('gender');
+    if (sel) sel.addEventListener('change', onGenderChange);
+  }
+})();
+</script>
+
+</body>
+</html>
