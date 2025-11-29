@@ -888,6 +888,7 @@ const BALDISH = /(shaved|clean[- ]?shaven|razor[- ]?shaved|zero-guard|buzzed to 
 // Natural colour distributions by region
 const HAIR_NATURAL_BY_REGION = {
   SahelianAfrica: { "Jet black":0.55,"Black-brown":0.35,"Dark brown":0.09,"Medium brown":0.01 },
+  Baltics:   { "Jet black":0.10,"Black-brown":0.28,"Dark brown":0.28,"Medium brown":0.18,"Light brown":0.10,"Dirty blond":0.04,"Blond":0.02 },
   China:   { "Jet black":0.62,"Black-brown":0.25,"Dark brown":0.11,"Medium brown":0.02 },
   Japan:   { "Jet black":0.62,"Black-brown":0.25,"Dark brown":0.11,"Medium brown":0.02 },
   Filipino:   { "Jet black":0.62,"Black-brown":0.25,"Dark brown":0.11,"Medium brown":0.02 },
@@ -908,6 +909,7 @@ const HAIR_NATURAL_BY_REGION = {
   Italia:               { "Black-brown":0.36,"Dark brown":0.40,"Medium brown":0.18,"Light brown":0.05,"Auburn":0.01 },
   EastSlavic:           { "Black-brown":0.28,"Dark brown":0.38,"Medium brown":0.22,"Light brown":0.10,"Auburn":0.02 },
   EastBalkan:            { "Jet black":0.10,"Black-brown":0.28,"Dark brown":0.28,"Medium brown":0.18,"Light brown":0.10,"Dirty blond":0.04,"Blond":0.02 },
+  WestBalkan:            { "Jet black":0.10,"Black-brown":0.28,"Dark brown":0.28,"Medium brown":0.18,"Light brown":0.10,"Dirty blond":0.04,"Blond":0.02 },
   Turkish:               { "Jet black":0.10,"Black-brown":0.28,"Dark brown":0.28,"Medium brown":0.18,"Light brown":0.10,"Dirty blond":0.04,"Blond":0.02 },
   SouthConeSA:           { "Black-brown":0.30,"Dark brown":0.42,"Medium brown":0.20,"Light brown":0.06,"Auburn":0.02, "Dirty blond":0.08 },
   "Mixed-Race":          { "Black-brown":0.25,"Dark brown":0.31,"Medium brown":0.22,"Light brown":0.12,"Dirty blond":0.06,"Blond":0.03,"Auburn":0.01 }
@@ -915,9 +917,9 @@ const HAIR_NATURAL_BY_REGION = {
 
 // Chance to use dyed colours (higher in Asia/SE Asia)
 const DYED_RATE_BY_REGION = {
-  China: 0.18, Japan: 0.18, MainlandSEA: 0.18, Filipino: 0.18, Indonesia: 0.12, Mestizo: 0.16,
+  China: 0.18, Baltics: 0.08, Japan: 0.18, MainlandSEA: 0.18, Filipino: 0.18, Indonesia: 0.12, Mestizo: 0.16,
   CentralEurope: 0.11, Scandinavian: 0.12, Caucasian: 0.18, Netherlands: 0.18, Singapore: 0.12,
-  Mashriq: 0.04, ArabGulf: 0.04, Turkish: 0.06, Italia: 0.09, EastSlavic: 0.09, EastBalkan: 0.09,
+  Mashriq: 0.04, ArabGulf: 0.04, Turkish: 0.06, Italia: 0.09, EastSlavic: 0.09, EastBalkan: 0.09, WestBalkan: 0.09,
   EECA: 0.07, SouthConeSA: 0.17, Maghreb: 0.08, SouthAsia: 0.10, SahelianAfrica: 0.12, "Mixed-Race": 0.18
 };
 
@@ -1091,6 +1093,7 @@ const STRICT_BROWN_FOR = new Set(["African", "Asian", "Seasian", "MESA"]);
 const EYE_BY_REGION = {
   "Afro American":   { Brown: 1.00 },
   Afrocaribbean:     { Brown: 1.00 },
+  Baltics:           { Brown: 0.75, Green: 0.10, Blue: 0.15 },
   CentralAfrica:     { Brown: 1.00 },
   EastAfrica:        { Brown: 1.00 },
   HornofAfrica:      { Brown: 1.00 },
@@ -1117,6 +1120,7 @@ const EYE_BY_REGION = {
   EastSlavic:        { Brown: 0.75, Green: 0.10, Blue: 0.15 },
   Turkish:            { Brown: 0.75, Green: 0.10, Blue: 0.15 },
   EastBalkan:        { Brown: 0.75, Green: 0.10, Blue: 0.15 },
+  WestBalkan:        { Brown: 0.75, Green: 0.10, Blue: 0.15 },
   EECA:              { Brown: 0.60, Blue: 0.25, Green: 0.10, Grey: 0.05 },
   SouthConeSA:       { Brown: 0.90, Green: 0.06, Blue: 0.04 },
   "Mixed-Race":      { Brown: 0.60, Blue: 0.20, Green: 0.15, Grey: 0.05 }
